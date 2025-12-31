@@ -12,7 +12,6 @@ import {
   Network as NetworkIcon,
   Radar,
   ShieldCheck,
-  Signal,
   Linkedin,
 } from "lucide-react";
 
@@ -26,11 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const stats = [
-  { label: "Infrastruktur Jaringan", value: "Ahli", icon: Signal },
-  { label: "Keamanan Jaringan", value: "Blue Team", icon: ShieldCheck },
-  { label: "Lokasi", value: "P.N. Cilacap", icon: MapPin },
-];
+// Stats section removed per request; icon import kept for future reuse? Actually unused, remove below.
 
 const skills = [
   {
@@ -94,14 +89,14 @@ const projects = [
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: "easeOut" },
-};
+  transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+} as const;
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+    <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col gap-16 px-6 pb-20 pt-14 sm:px-8 lg:px-12 lg:pb-24">
       <motion.section
-        className="grid items-start gap-10 lg:grid-cols-[1.2fr_0.9fr]"
+        className="grid items-start gap-10 md:gap-12 lg:grid-cols-[1.15fr_0.95fr]"
         initial="initial"
         animate="animate"
       >
@@ -144,26 +139,6 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {stats.map((stat, idx) => (
-              <motion.div
-                key={stat.label}
-                className="glass accent-ring rounded-2xl border border-white/10 px-4 py-5"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * idx, duration: 0.35 }}
-              >
-                <div className="flex items-center gap-3 text-white/80">
-                  <stat.icon className="h-5 w-5 text-[#9de2ff]" />
-                  <p className="text-sm uppercase tracking-[0.2em] text-white/60">
-                    {stat.label}
-                  </p>
-                </div>
-                <p className="mt-3 text-2xl font-semibold text-white">{stat.value}</p>
-              </motion.div>
-            ))}
-          </div>
-
           <div className="mt-6 flex gap-3 text-white/70">
             <a
               className="flex items-center gap-2 text-sm underline-offset-4 hover:text-white hover:underline"
@@ -199,8 +174,8 @@ export default function Home() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <div className="absolute -inset-4 rounded-[32px] bg-gradient-to-br from-[#9de2ff]/20 via-transparent to-[#b9ffd6]/20 blur-3xl" />
-          <Card className="relative border-white/10 bg-white/[0.04] p-6">
+          <div className="absolute -inset-4 rounded-4xl bg-linear-to-br from-[#9de2ff]/20 via-transparent to-[#b9ffd6]/20 blur-3xl" />
+          <Card className="relative border-white/10 bg-white/4 p-6 md:p-7 flex flex-col gap-4">
             <CardHeader className="flex flex-row items-center justify-between gap-3">
               <div>
                 <CardTitle className="text-2xl">Mission Ready</CardTitle>
@@ -236,7 +211,7 @@ export default function Home() {
 
       <section id="skills" className="mt-16 space-y-8">
         <div className="section-title">Keahlian</div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {skills.map((skill, idx) => (
             <motion.div
               key={skill.title}
@@ -245,7 +220,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 0.05 * idx, duration: 0.4 }}
             >
-              <Card className="h-full border-white/10 bg-white/[0.04]">
+              <Card className="flex h-full flex-col border-white/10 bg-white/4">
                 <CardHeader className="flex flex-row items-start justify-between">
                   <div>
                     <CardTitle>{skill.title}</CardTitle>
@@ -253,7 +228,7 @@ export default function Home() {
                   </div>
                   <skill.icon className="h-6 w-6 text-[#9de2ff]" />
                 </CardHeader>
-                <CardContent className="flex flex-wrap gap-2">
+                <CardContent className="flex flex-1 flex-wrap gap-2 items-start">
                   {skill.items.map((item) => (
                     <Badge key={item} variant="outline" className="border-white/20 text-white/80">
                       {item}
@@ -268,7 +243,7 @@ export default function Home() {
 
       <section id="experience" className="mt-16 space-y-8">
         <div className="section-title">Pengalaman & Studi</div>
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {experiences.map((exp, idx) => (
             <motion.div
               key={exp.title}
@@ -277,7 +252,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 0.05 * idx, duration: 0.4 }}
             >
-              <Card className="h-full border-white/10 bg-white/[0.04]">
+              <Card className="flex h-full flex-col border-white/10 bg-white/4">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between gap-2">
                     <span>{exp.title}</span>
@@ -287,7 +262,7 @@ export default function Home() {
                   </CardTitle>
                   <CardDescription>{exp.place}</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1">
                   <p className="text-white/75 leading-relaxed">{exp.focus}</p>
                 </CardContent>
               </Card>
@@ -298,7 +273,7 @@ export default function Home() {
 
       <section id="projects" className="mt-16 space-y-8">
         <div className="section-title">Proyek Terpilih</div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
             <motion.div
               key={project.title}
@@ -307,14 +282,14 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ delay: 0.05 * idx, duration: 0.4 }}
             >
-              <Card className="h-full border-white/10 bg-white/[0.04]">
+              <Card className="flex h-full flex-col border-white/10 bg-white/4">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
                     {project.title}
                   </CardTitle>
                   <CardDescription>{project.summary}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-wrap gap-2">
+                <CardContent className="mt-auto flex flex-wrap gap-2">
                   {project.stack.map((item) => (
                     <Badge key={item} variant="outline" className="border-white/20 text-white/80">
                       {item}
@@ -329,7 +304,7 @@ export default function Home() {
 
       <section id="contact" className="mt-16 space-y-6">
         <div className="section-title">Kontak</div>
-        <Card className="border-white/10 bg-white/[0.04]">
+        <Card className="border-white/10 bg-white/4">
           <CardHeader>
             <CardTitle>Siap diskusi atau kolaborasi?</CardTitle>
             <CardDescription>
@@ -337,9 +312,40 @@ export default function Home() {
               terhubung ke backend; gunakan email jika ingin respon cepat.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form className="grid gap-4 md:grid-cols-2">
-              <div className="md:col-span-1">
+          <CardContent className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-center gap-2 text-white/80">
+                <Mail className="h-4 w-4 text-[#9de2ff]" />
+                <a href="mailto:augie.aristitoazka@gmail.com" className="hover:text-white">
+                  augie.aristitoazka@gmail.com
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <Linkedin className="h-4 w-4 text-[#9de2ff]" />
+                <a href="https://www.linkedin.com/in/augiearistito" target="_blank" rel="noreferrer" className="hover:text-white">
+                  linkedin.com/in/augiearistito
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <Github className="h-4 w-4 text-[#9de2ff]" />
+                <a href="https://github.com/x0r909" target="_blank" rel="noreferrer" className="hover:text-white">
+                  github.com/x0r909
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <span className="inline-block h-4 w-4 rounded-full bg-linear-to-br from-pink-400 via-purple-400 to-orange-300" />
+                <a href="https://www.instagram.com/aw.akira_/" target="_blank" rel="noreferrer" className="hover:text-white">
+                  instagram.com/aw.akira_/
+                </a>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1 text-xs text-white/70">
+                <span className="rounded-full border border-white/15 px-3 py-1">Respon cepat via email</span>
+                <span className="rounded-full border border-white/15 px-3 py-1">Bahasa: ID / EN</span>
+              </div>
+            </div>
+
+            <form className="grid gap-4 lg:grid-cols-2">
+              <div className="lg:col-span-1">
                 <label className="mb-2 block text-sm text-white/70">Nama</label>
                 <input
                   name="name"
@@ -350,7 +356,7 @@ export default function Home() {
                   required
                 />
               </div>
-              <div className="md:col-span-1">
+              <div className="lg:col-span-1">
                 <label className="mb-2 block text-sm text-white/70">Email</label>
                 <input
                   name="email"
@@ -362,7 +368,7 @@ export default function Home() {
                   required
                 />
               </div>
-              <div className="md:col-span-2">
+              <div className="lg:col-span-2">
                 <label className="mb-2 block text-sm text-white/70">Pesan</label>
                 <textarea
                   name="message"
@@ -374,9 +380,9 @@ export default function Home() {
                   required
                 />
               </div>
-              <div className="md:col-span-2 flex items-center justify-between gap-3 flex-wrap">
+              <div className="lg:col-span-2 flex items-center justify-between gap-3 flex-wrap">
                 <p className="text-sm text-white/60">
-                  Form ini statis. Untuk respon cepat, gunakan tombol email atau LinkedIn di atas.
+                  Form ini statis. Untuk respon cepat, gunakan email atau LinkedIn di atas.
                 </p>
                 <div className="flex gap-3">
                   <Button type="submit">Kirim Pesan</Button>
