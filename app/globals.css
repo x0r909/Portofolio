@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  --bg-0: #05060a;
+  --bg-1: #0c1424;
+  --bg-2: #11192b;
+  --accent-1: #9de2ff;
+  --accent-2: #b9ffd6;
+  --muted: #9ca3af;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 20%, #132238, transparent 40%),
+    radial-gradient(circle at 80% 10%, #1a2f45, transparent 35%),
+    radial-gradient(circle at 60% 70%, #0d1a2e, transparent 40%),
+    linear-gradient(135deg, var(--bg-0), var(--bg-2));
+  color: #f8fafc;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+}
+
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 75%);
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.glass {
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.accent-ring {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 25px 60px -30px rgba(157, 226, 255, 0.4);
+}
+
+.section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.section-title::before {
+  content: "";
+  height: 1px;
+  width: 56px;
+  background: linear-gradient(90deg, rgba(157, 226, 255, 0.5), transparent);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(185, 255, 214, 0.25);
+  color: #e0f2fe;
+}
