@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
+  Award,
   BadgeCheck,
   Github,
   LaptopMinimal,
@@ -25,7 +27,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-// Stats section removed per request; icon import kept for future reuse? Actually unused, remove below.
+const certifications = [
+  {
+    title: "MTCNA",
+    fullName: "MikroTik Certified Network Associate",
+    issuer: "MikroTik",
+  },
+];
 
 const skills = [
   {
@@ -65,24 +73,39 @@ const experiences = [
   },
 ];
 
+const organizations = [
+  {
+    org: "HIMATRIS",
+    fullName: "Himpunan Mahasiswa Komputer dan Bisnis Politeknik Negeri Cilacap",
+    role: "Staff Muda PSDM",
+    period: "2024/2025",
+  },
+  {
+    org: "HIMATRIS",
+    fullName: "Himpunan Mahasiswa Komputer dan Bisnis Politeknik Negeri Cilacap",
+    role: "Sekretaris Umum",
+    period: "2025/2026",
+  },
+];
+
 const projects = [
   {
-    title: "Segmentasi & Zero Trust Lab",
+    title: "Threat Detection & Log Analysis Lab",
     summary:
-      "Membangun lab multi-segmen dengan policy berbasis identitas, menganalisis lalu lintas dan hardening akses.",
-    stack: ["VLAN", "ACL", "WireGuard", "MFA"],
+      "Setup pipeline deteksi ancaman dari berbagai sumber ke SIEM, tuning alert, dan korelasi event untuk identifikasi serangan.",
+    stack: ["Suricata", "Zeek", "ELK Stack", "Sigma Rules"],
   },
   {
-    title: "Blue Team Mini SOC",
+    title: "Incident Response Playbook & Simulation",
     summary:
-      "Pipeline log dari firewall dan endpoint ke SIEM, dashboard deteksi anomali, alert playbook dasar.",
-    stack: ["Suricata", "Zeek", "ELK", "Sigma rules"],
+      "Membangun playbook IR terstruktur, simulasi skenario serangan, dan dokumentasi proses triage hingga containment.",
+    stack: ["TheHive", "MITRE ATT&CK", "Bash/Python", "Wireshark"],
   },
   {
-    title: "Jaringan Kampus Efisien",
+    title: "Network Hardening & Monitoring",
     summary:
-      "Perancangan topologi modular, QoS ringan, dan monitoring kesehatan link untuk lingkungan kampus kecil.",
-    stack: ["MikroTik", "QoS", "SNMP", "Grafana"],
+      "Implementasi segmentasi jaringan, hardening konfigurasi, dan monitoring real-time untuk mendeteksi anomali.",
+    stack: ["MikroTik", "Suricata", "Grafana", "SNMP"],
   },
 ];
 
@@ -92,78 +115,115 @@ const fadeUp = {
   transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
 } as const;
 
+function TerminalBar({ title = "~" }: { title?: string }) {
+  return (
+    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-[#00ff41]/10 bg-[#00ff41]/2.5 shrink-0">
+      <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+      <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+      <span className="h-2.5 w-2.5 rounded-full bg-[#28c841]" />
+      <span className="ml-auto font-mono text-[10px] text-[#00ff41]/35 tracking-widest">{title}</span>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col gap-16 px-6 pb-20 pt-14 sm:px-8 lg:px-12 lg:pb-24">
+    <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col gap-20 px-6 pb-24 pt-14 sm:px-8 lg:px-12">
+
+      {/* ── HERO ── */}
       <motion.section
         className="grid items-start gap-10 md:gap-12 lg:grid-cols-[1.15fr_0.95fr]"
         initial="initial"
         animate="animate"
       >
         <motion.div {...fadeUp}>
-          <Badge variant="glow" className="mb-4">
+          {/* Terminal prompt */}
+          <div className="mb-5 font-mono text-xs tracking-wider">
+            <span className="text-[#00ff41]/35">root@portfolio</span>
+            <span className="text-[#c8f5c4]/20">:</span>
+            <span className="text-[#00d4ff]/55">~</span>
+            <span className="text-[#c8f5c4]/20">$ </span>
+            <span className="text-[#00ff41]/65">whoami</span>
+          </div>
+
+          <div className="mb-6 relative inline-block">
+            <div className="absolute -inset-2 rounded-full bg-[#00ff41]/15 blur-lg" />
+            <Image
+              src="/img/photo-profile.jpeg"
+              alt="Augie Aristito Sudiarto"
+              width={112}
+              height={112}
+              className="relative rounded-full border-2 border-[#00ff41]/35 object-cover"
+              priority
+            />
+            <span className="absolute bottom-0.5 right-0.5 status-dot" />
+          </div>
+
+          <Badge variant="glow" className="mb-5">
             Networking / Blue Team
           </Badge>
-          <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
+
+          <h1 className="glitch blink-cursor text-glow text-4xl font-semibold leading-tight text-[#00ff41] font-mono sm:text-5xl">
             Augie Aristito Sudiarto
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-white/70">
-            Mahasiswa D4 Rekayasa Keamanan Siber di Politeknik Negeri Cilacap. 
+
+          <p className="mt-4 max-w-2xl font-mono text-sm leading-relaxed text-[#c8f5c4]/55">
+            <span className="text-[#00ff41]/35"># </span>
+            Mahasiswa D4 Rekayasa Keamanan Siber di Politeknik Negeri Cilacap.
             Fokus pada arsitektur dan hardening infrastruktur jaringan, serta kesiapan blue team untuk menjaga layanan tetap stabil dan aman.
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/70">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 bg-white/5">
-              <MapPin size={16} /> Cilacap, Indonesia
+
+          <div className="mt-6 flex flex-wrap items-center gap-2.5 font-mono text-xs text-[#c8f5c4]/55">
+            <span className="inline-flex items-center gap-2 border border-[#00ff41]/20 bg-[#00ff41]/4 px-3 py-1.5 tracking-wide">
+              <MapPin size={11} className="text-[#00ff41]" /> Cilacap, Indonesia
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 bg-white/5">
-              <BadgeCheck size={16} /> Available for collaboration
+            <span className="inline-flex items-center gap-2 border border-[#00ff41]/20 bg-[#00ff41]/4 px-3 py-1.5 tracking-wide">
+              <span className="status-dot" />
+              Available for collaboration
             </span>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
               <a href="#projects">
-                Lihat Proyek <ArrowUpRight className="ml-2 h-4 w-4" />
+                &gt; view_projects <ArrowUpRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
             <Button variant="outline" asChild size="lg">
-              <a href="#contact">Hubungi Saya</a>
+              <a href="#contact">&gt; contact_me</a>
             </Button>
             <Button variant="ghost" asChild size="lg">
-              <a
-                href="mailto:augie.aristitoazka@gmail.com"
-                className="flex items-center gap-2"
-              >
-                <Mail className="h-4 w-4" /> Email cepat
+              <a href="mailto:augie.aristitoazka@gmail.com" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" /> send_email
               </a>
             </Button>
           </div>
 
-          <div className="mt-6 flex gap-3 text-white/70">
+          <div className="mt-6 flex flex-wrap gap-5 font-mono text-[11px] text-[#c8f5c4]/45">
             <a
-              className="flex items-center gap-2 text-sm underline-offset-4 hover:text-white hover:underline"
+              className="flex items-center gap-2 hover:text-[#00ff41] transition-colors"
               href="https://github.com/x0r909"
               target="_blank"
               rel="noreferrer"
             >
-              <Github className="h-4 w-4" /> GitHub
+              <Github className="h-3.5 w-3.5" /> github.com/x0r909
             </a>
             <a
-              className="flex items-center gap-2 text-sm underline-offset-4 hover:text-white hover:underline"
+              className="flex items-center gap-2 hover:text-[#00ff41] transition-colors"
               href="https://www.linkedin.com/in/augiearistito"
               target="_blank"
               rel="noreferrer"
             >
-              <Linkedin className="h-4 w-4" /> LinkedIn
+              <Linkedin className="h-3.5 w-3.5" /> linkedin/augiearistito
             </a>
             <a
-              className="flex items-center gap-2 text-sm underline-offset-4 hover:text-white hover:underline"
+              className="flex items-center gap-2 hover:text-[#00ff41] transition-colors"
               href="https://www.instagram.com/aw.akira_/"
               target="_blank"
               rel="noreferrer"
             >
-              <span className="inline-block h-4 w-4 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-orange-300" />
-              Instagram
+              <span className="inline-block h-3.5 w-3.5 rounded-full bg-linear-to-br from-pink-400 via-purple-400 to-orange-300" />
+              aw.akira_
             </a>
           </div>
         </motion.div>
@@ -174,33 +234,34 @@ export default function Home() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <div className="absolute -inset-4 rounded-4xl bg-linear-to-br from-[#9de2ff]/20 via-transparent to-[#b9ffd6]/20 blur-3xl" />
-          <Card className="relative border-white/10 bg-white/4 p-6 md:p-7 flex flex-col gap-4">
-            <CardHeader className="flex flex-row items-center justify-between gap-3">
+          <div className="absolute -inset-6 rounded-2xl bg-[#00ff41]/4 blur-3xl" />
+          <Card className="relative flex flex-col overflow-hidden rounded-md border-0 p-0">
+            <TerminalBar title="mission_status.sh" />
+            <CardHeader className="flex flex-row items-center justify-between gap-3 px-6 pt-5">
               <div>
-                <CardTitle className="text-2xl">Mission Ready</CardTitle>
+                <CardTitle className="text-lg font-mono text-[#00ff41]">./Mission Ready</CardTitle>
                 <CardDescription>
                   Arsitektur yang resilient, monitoring yang sigap, respons yang tenang.
                 </CardDescription>
               </div>
-              <Radar className="h-10 w-10 text-[#9de2ff]" />
+              <Radar className="h-8 w-8 shrink-0 text-[#00ff41]/55" />
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
-                <ShieldCheck className="h-5 w-5 text-[#b9ffd6]" />
-                <p className="text-sm text-white/70">
+            <CardContent className="space-y-2.5 px-6 pb-6">
+              <div className="flex items-start gap-3 border border-[#00ff41]/10 bg-[#00ff41]/3 p-3">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#00ff41]" />
+                <p className="font-mono text-xs leading-relaxed text-[#c8f5c4]/60">
                   Hardening akses, segmentasi, dan baseline monitoring supaya insiden lebih mudah dikendalikan.
                 </p>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
-                <LineChart className="h-5 w-5 text-[#9de2ff]" />
-                <p className="text-sm text-white/70">
+              <div className="flex items-start gap-3 border border-[#00ff41]/10 bg-[#00ff41]/3 p-3">
+                <LineChart className="mt-0.5 h-4 w-4 shrink-0 text-[#00d4ff]" />
+                <p className="font-mono text-xs leading-relaxed text-[#c8f5c4]/60">
                   Observabilitas ringan: alert sederhana yang bisa diikuti tindakan nyata.
                 </p>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
-                <LaptopMinimal className="h-5 w-5 text-[#b9ffd6]" />
-                <p className="text-sm text-white/70">
+              <div className="flex items-start gap-3 border border-[#00ff41]/10 bg-[#00ff41]/3 p-3">
+                <LaptopMinimal className="mt-0.5 h-4 w-4 shrink-0 text-[#00ff41]" />
+                <p className="font-mono text-xs leading-relaxed text-[#c8f5c4]/60">
                   Dokumentasi rapi, playbook singkat, dan pengetahuan tim yang mudah dibagikan.
                 </p>
               </div>
@@ -209,30 +270,33 @@ export default function Home() {
         </motion.div>
       </motion.section>
 
-      <section id="skills" className="mt-16 space-y-8">
-        <div className="section-title">Keahlian</div>
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      {/* ── SKILLS ── */}
+      <section id="skills" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">01_keahlian</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {skills.map((skill, idx) => (
             <motion.div
               key={skill.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.05 * idx, duration: 0.4 }}
+              transition={{ delay: 0.06 * idx, duration: 0.4 }}
             >
-              <Card className="flex h-full flex-col border-white/10 bg-white/4">
-                <CardHeader className="flex flex-row items-start justify-between">
+              <Card className="flex h-full flex-col overflow-hidden rounded-md border-0 p-0">
+                <TerminalBar title={skill.title.toLowerCase().replace(/[^a-z0-9]/g, "_") + ".sh"} />
+                <CardHeader className="flex flex-row items-start justify-between px-5 pt-4">
                   <div>
                     <CardTitle>{skill.title}</CardTitle>
                     <CardDescription>Fokus praktik dan tooling</CardDescription>
                   </div>
-                  <skill.icon className="h-6 w-6 text-[#9de2ff]" />
+                  <skill.icon className="h-5 w-5 shrink-0 text-[#00ff41]/55" />
                 </CardHeader>
-                <CardContent className="flex flex-1 flex-wrap gap-2 items-start">
+                <CardContent className="flex flex-1 flex-wrap items-start gap-1.5 px-5 pb-5">
                   {skill.items.map((item) => (
-                    <Badge key={item} variant="outline" className="border-white/20 text-white/80">
-                      {item}
-                    </Badge>
+                    <Badge key={item} variant="outline">{item}</Badge>
                   ))}
                 </CardContent>
               </Card>
@@ -241,29 +305,67 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="experience" className="mt-16 space-y-8">
-        <div className="section-title">Pengalaman & Studi</div>
-        <div className="grid gap-6 md:grid-cols-2">
+      {/* ── CERTIFICATIONS ── */}
+      <section id="certifications" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">02_sertifikasi</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {certifications.map((cert, idx) => (
+            <motion.div
+              key={cert.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.06 * idx, duration: 0.4 }}
+            >
+              <Card className="flex h-full flex-col overflow-hidden rounded-md border-0 p-0">
+                <TerminalBar title="cert.json" />
+                <CardHeader className="flex flex-row items-start justify-between px-5 pt-4">
+                  <div>
+                    <CardTitle>{cert.title}</CardTitle>
+                    <CardDescription>{cert.fullName}</CardDescription>
+                  </div>
+                  <Award className="h-5 w-5 shrink-0 text-[#00d4ff]/65" />
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <Badge variant="glow">{cert.issuer}</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── EXPERIENCE ── */}
+      <section id="experience" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">03_pengalaman</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <div className="grid gap-5 md:grid-cols-2">
           {experiences.map((exp, idx) => (
             <motion.div
               key={exp.title}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.05 * idx, duration: 0.4 }}
+              transition={{ delay: 0.06 * idx, duration: 0.4 }}
             >
-              <Card className="flex h-full flex-col border-white/10 bg-white/4">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between gap-2">
+              <Card className="flex h-full flex-col overflow-hidden rounded-md border-0 p-0">
+                <TerminalBar title="experience.log" />
+                <CardHeader className="px-5 pt-4">
+                  <CardTitle className="flex items-start justify-between gap-2 text-sm">
                     <span>{exp.title}</span>
-                    <Badge variant="default" className="bg-white/10 text-white">
-                      {exp.time}
-                    </Badge>
+                    <Badge variant="default" className="shrink-0 text-[9px]">{exp.time}</Badge>
                   </CardTitle>
                   <CardDescription>{exp.place}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-white/75 leading-relaxed">{exp.focus}</p>
+                <CardContent className="flex-1 px-5 pb-5">
+                  <p className="font-mono text-xs leading-relaxed text-[#c8f5c4]/55">
+                    <span className="text-[#00ff41]/40">&gt; </span>{exp.focus}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -271,29 +373,65 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="projects" className="mt-16 space-y-8">
-        <div className="section-title">Proyek Terpilih</div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* ── ORGANIZATIONS ── */}
+      <section id="organizations" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">04_organisasi</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {organizations.map((org, idx) => (
+            <motion.div
+              key={`${org.org}-${org.period}`}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.06 * idx, duration: 0.4 }}
+            >
+              <Card className="flex h-full flex-col overflow-hidden rounded-md border-0 p-0">
+                <TerminalBar title="org.log" />
+                <CardHeader className="px-5 pt-4">
+                  <CardTitle className="flex items-start justify-between gap-2 text-sm">
+                    <span>{org.org}</span>
+                    <Badge variant="default" className="shrink-0 text-[9px]">{org.period}</Badge>
+                  </CardTitle>
+                  <CardDescription>{org.fullName}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 px-5 pb-5">
+                  <p className="font-mono text-xs leading-relaxed text-[#c8f5c4]/55">
+                    <span className="text-[#00ff41]/40">&gt; </span>{org.role}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── PROJECTS ── */}
+      <section id="projects" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">05_proyek</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
             <motion.div
               key={project.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.05 * idx, duration: 0.4 }}
+              transition={{ delay: 0.06 * idx, duration: 0.4 }}
             >
-              <Card className="flex h-full flex-col border-white/10 bg-white/4">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    {project.title}
-                  </CardTitle>
+              <Card className="flex h-full flex-col overflow-hidden rounded-md border-0 p-0">
+                <TerminalBar title={`proj_${String(idx + 1).padStart(2, "0")}.sh`} />
+                <CardHeader className="px-5 pt-4">
+                  <CardTitle className="text-sm leading-snug">{project.title}</CardTitle>
                   <CardDescription>{project.summary}</CardDescription>
                 </CardHeader>
-                <CardContent className="mt-auto flex flex-wrap gap-2">
+                <CardContent className="mt-auto flex flex-wrap items-start gap-1.5 px-5 pb-5">
                   {project.stack.map((item) => (
-                    <Badge key={item} variant="outline" className="border-white/20 text-white/80">
-                      {item}
-                    </Badge>
+                    <Badge key={item} variant="outline">{item}</Badge>
                   ))}
                 </CardContent>
               </Card>
@@ -302,104 +440,75 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="contact" className="mt-16 space-y-6">
-        <div className="section-title">Kontak</div>
-        <Card className="border-white/10 bg-white/4">
-          <CardHeader>
-            <CardTitle>Siap diskusi atau kolaborasi?</CardTitle>
+      {/* ── CONTACT ── */}
+      <section id="contact" className="space-y-8">
+        <div className="flex items-center gap-4">
+          <div className="section-title">06_kontak</div>
+          <div className="h-px flex-1 bg-[#00ff41]/10" />
+        </div>
+        <Card className="overflow-hidden rounded-md border-0 p-0">
+          <TerminalBar title="contact.sh" />
+          <CardHeader className="px-6 pt-5">
+            <CardTitle className="text-lg">Siap diskusi atau kolaborasi?</CardTitle>
             <CardDescription>
-              Kirim pesan singkat tentang kebutuhan jaringan atau rencana peningkatan keamanan. Form ini tidak
-              terhubung ke backend; gunakan email jika ingin respon cepat.
+              Hubungi saya melalui email atau media sosial di bawah ini.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white/80">
-                <Mail className="h-4 w-4 text-[#9de2ff]" />
-                <a href="mailto:augie.aristitoazka@gmail.com" className="hover:text-white">
+          <CardContent className="space-y-5 px-6 pb-6">
+            <div className="space-y-2.5 border border-[#00ff41]/10 bg-[#00ff41]/2 p-4 font-mono text-xs">
+              <div className="flex items-center gap-3 text-[#c8f5c4]/65">
+                <span className="w-3 text-[#00ff41]/40">$</span>
+                <Mail className="h-3.5 w-3.5 shrink-0 text-[#00ff41]" />
+                <a href="mailto:augie.aristitoazka@gmail.com" className="hover:text-[#00ff41] transition-colors underline-offset-4 hover:underline">
                   augie.aristitoazka@gmail.com
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <Linkedin className="h-4 w-4 text-[#9de2ff]" />
-                <a href="https://www.linkedin.com/in/augiearistito" target="_blank" rel="noreferrer" className="hover:text-white">
+              <div className="flex items-center gap-3 text-[#c8f5c4]/65">
+                <span className="w-3 text-[#00ff41]/40">$</span>
+                <Linkedin className="h-3.5 w-3.5 shrink-0 text-[#00ff41]" />
+                <a href="https://www.linkedin.com/in/augiearistito" target="_blank" rel="noreferrer" className="hover:text-[#00ff41] transition-colors underline-offset-4 hover:underline">
                   linkedin.com/in/augiearistito
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <Github className="h-4 w-4 text-[#9de2ff]" />
-                <a href="https://github.com/x0r909" target="_blank" rel="noreferrer" className="hover:text-white">
+              <div className="flex items-center gap-3 text-[#c8f5c4]/65">
+                <span className="w-3 text-[#00ff41]/40">$</span>
+                <Github className="h-3.5 w-3.5 shrink-0 text-[#00ff41]" />
+                <a href="https://github.com/x0r909" target="_blank" rel="noreferrer" className="hover:text-[#00ff41] transition-colors underline-offset-4 hover:underline">
                   github.com/x0r909
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <span className="inline-block h-4 w-4 rounded-full bg-linear-to-br from-pink-400 via-purple-400 to-orange-300" />
-                <a href="https://www.instagram.com/aw.akira_/" target="_blank" rel="noreferrer" className="hover:text-white">
+              <div className="flex items-center gap-3 text-[#c8f5c4]/65">
+                <span className="w-3 text-[#00ff41]/40">$</span>
+                <span className="inline-block h-3.5 w-3.5 rounded-full bg-linear-to-br from-pink-400 via-purple-400 to-orange-300" />
+                <a href="https://www.instagram.com/aw.akira_/" target="_blank" rel="noreferrer" className="hover:text-[#00ff41] transition-colors underline-offset-4 hover:underline">
                   instagram.com/aw.akira_/
                 </a>
               </div>
-              <div className="flex flex-wrap gap-2 pt-1 text-xs text-white/70">
-                <span className="rounded-full border border-white/15 px-3 py-1">Respon cepat via email</span>
-                <span className="rounded-full border border-white/15 px-3 py-1">Bahasa: ID / EN</span>
-              </div>
             </div>
-
-            <form className="grid gap-4 lg:grid-cols-2">
-              <div className="lg:col-span-1">
-                <label className="mb-2 block text-sm text-white/70">Nama</label>
-                <input
-                  name="name"
-                  placeholder="Nama lengkap"
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:border-[#9de2ff] focus:outline-none"
-                  autoComplete="off"
-                  suppressHydrationWarning
-                  required
-                />
-              </div>
-              <div className="lg:col-span-1">
-                <label className="mb-2 block text-sm text-white/70">Email</label>
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="email@contoh.com"
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:border-[#9de2ff] focus:outline-none"
-                  autoComplete="off"
-                  suppressHydrationWarning
-                  required
-                />
-              </div>
-              <div className="lg:col-span-2">
-                <label className="mb-2 block text-sm text-white/70">Pesan</label>
-                <textarea
-                  name="message"
-                  rows={4}
-                  placeholder="Ceritakan kebutuhan jaringan atau target keamanan yang ingin dicapai"
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:border-[#9de2ff] focus:outline-none"
-                  autoComplete="off"
-                  suppressHydrationWarning
-                  required
-                />
-              </div>
-              <div className="lg:col-span-2 flex items-center justify-between gap-3 flex-wrap">
-                <p className="text-sm text-white/60">
-                  Form ini statis. Untuk respon cepat, gunakan email atau LinkedIn di atas.
-                </p>
-                <div className="flex gap-3">
-                  <Button type="submit">Kirim Pesan</Button>
-                  <Button variant="outline" asChild>
-                    <a
-                      href="mailto:augie.aristitoazka@gmail.com"
-                      className="flex items-center gap-2"
-                    >
-                      <Mail className="h-4 w-4" /> Email langsung
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            </form>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <a href="mailto:augie.aristitoazka@gmail.com" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" /> &gt; send_email
+                </a>
+              </Button>
+              <Button variant="outline" asChild size="lg">
+                <a href="https://www.linkedin.com/in/augiearistito" target="_blank" rel="noreferrer">
+                  &gt; connect_linkedin
+                </a>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-[#00ff41]/10 pt-6 pb-2 text-center font-mono text-[11px] text-[#c8f5c4]/25">
+        <span className="text-[#00ff41]/30">root@portfolio</span>
+        <span className="text-[#c8f5c4]/15">:</span>
+        <span className="text-[#00d4ff]/40">~</span>
+        <span className="text-[#c8f5c4]/15">$ </span>
+        <span>echo &quot;© 2026 Augie Aristito Sudiarto. All rights reserved.&quot;</span>
+      </footer>
     </main>
   );
 }

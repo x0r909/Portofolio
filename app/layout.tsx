@@ -28,6 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative min-h-screen overflow-x-hidden`}
       >
+        <div className="scanlines" />
         <div className="grid-overlay" />
         <div className="noise-overlay" />
         <div className="relative z-10">{children}</div>
