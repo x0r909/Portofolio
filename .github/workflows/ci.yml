@@ -1,0 +1,38 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Gunakan versi Node.js yang konsisten
+          cache: 'npm' # Cache dependensi npm untuk build yang lebih cepat
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Build Project
+        run: npm run build
+
+      # Opsional: Tambahkan step untuk menjalankan test jika Anda punya setup test
+      # - name: Run Tests
+      #   run: npm run test
+
+      # Opsional: Jika Anda menggunakan Vercel CLI untuk deploy, Anda bisa menambahkan step deploy di sini.
+      # Namun, untuk CI/CD yang hanya memastikan build/lint/test sukses, step di atas sudah cukup.
