@@ -30,36 +30,38 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build   # Generates static files in /out
 ```
 
-### Deploy to Dokploy (Docker Compose)
+### Deploy to Dokploy (Docker Compose + Cloudflare Tunnel)
 
-1. Copy env template and set your domain:
+Setup ini hanya **expose port** (tanpa Traefik / Let's Encrypt). Domain diarahkan lewat Cloudflare Tunnel di homeserver.
+
+1. Copy env template:
 
 ```bash
 cp .env.example .env
-# Edit APP_DOMAIN, APP_NAME, etc.
+# Set HOST_PORT jika perlu (default 3000)
 ```
 
 2. In Dokploy → **Create Service** → **Compose**:
    - Provider: GitHub
    - Repository: this repo, branch `main`
    - Compose Path: `./docker-compose.yml`
-   - Paste the same variables from `.env.example` into Dokploy Environment
+   - Environment: paste isi `.env.example` (`HOST_PORT`, `NODE_ENV`)
 
-3. Domains: either set `APP_DOMAIN` in env (Traefik labels) **or** add the domain in Dokploy UI.
+3. Di Cloudflare Tunnel, buat public hostname → service `http://127.0.0.1:3000` (atau port `HOST_PORT` yang kamu set).
 
-4. Enable the Deploy Webhook in Dokploy, copy the URL, then add GitHub secret:
+4. Enable Deploy Webhook di Dokploy, lalu tambah GitHub secret:
    - Name: `DOKPLOY_WEBHOOK_URL`
-   - Value: webhook URL from Dokploy
+   - Value: webhook URL dari Dokploy
 
-5. Push to `main` → CI runs (lint, build, docker) → CD triggers Dokploy.
+5. Push ke `main` → CI → CD trigger Dokploy.
 
 Local Docker test:
 
 ```bash
 cp .env.example .env
-# For local without Traefik, create network once:
 docker network create dokploy-network
 docker compose up --build
+# App: http://localhost:3000
 ```
 
 ### Deploy to Vercel
