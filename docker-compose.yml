@@ -10,9 +10,9 @@ services:
       - .env
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-    # Host port for Cloudflare Tunnel → http://127.0.0.1:${HOST_PORT}
-    ports:
-      - "${HOST_PORT:-3000}:3000"
+    # Internal only — Dokploy Domains / Traefik routes here (no host publish)
+    expose:
+      - "${APP_PORT:-3000}"
     networks:
       - dokploy-network
 

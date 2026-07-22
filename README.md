@@ -30,38 +30,36 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build   # Generates static files in /out
 ```
 
-### Deploy to Dokploy (Docker Compose + Cloudflare Tunnel)
+### Deploy to Dokploy (Domains + Cloudflare Tunnel)
 
-Setup ini hanya **expose port** (tanpa Traefik / Let's Encrypt). Domain diarahkan lewat Cloudflare Tunnel di homeserver.
+Bisa dipakai dengan Cloudflare Tunnel **tanpa expose port ke host**.
 
-1. Copy env template:
+Alur traffic:
+`Internet → Cloudflare Tunnel → dokploy-traefik:80 → container:APP_PORT`
 
-```bash
-cp .env.example .env
-# Set HOST_PORT jika perlu (default 3000)
-```
+1. Deploy compose di Dokploy (Compose Path: `./docker-compose.yml`).
+2. Environment Dokploy — paste dari `.env.example` (`NODE_ENV`, `APP_PORT`).
+3. Tab **Domains** → Add Domain:
+   - Host: `portfolio.yourdomain.com`
+   - Service: `portfolio`
+   - Container Port: `3000` (sama dengan `APP_PORT`)
+   - HTTPS: **OFF**
+   - Certificate: **None** (TLS di Cloudflare)
+4. Cloudflare Tunnel → Published route:
+   - Domain sama dengan di Dokploy
+   - Service type: **HTTP**
+   - URL: `dokploy-traefik:80`  
+     (atau wildcard `*` → `dokploy-traefik:80` untuk semua subdomain)
+5. Pastikan `cloudflared` ada di `dokploy-network` (atau pakai template Cloudflared Dokploy).
+6. Optional: set GitHub secret `DOKPLOY_WEBHOOK_URL` untuk CD otomatis.
 
-2. In Dokploy → **Create Service** → **Compose**:
-   - Provider: GitHub
-   - Repository: this repo, branch `main`
-   - Compose Path: `./docker-compose.yml`
-   - Environment: paste isi `.env.example` (`HOST_PORT`, `NODE_ENV`)
-
-3. Di Cloudflare Tunnel, buat public hostname → service `http://127.0.0.1:3000` (atau port `HOST_PORT` yang kamu set).
-
-4. Enable Deploy Webhook di Dokploy, lalu tambah GitHub secret:
-   - Name: `DOKPLOY_WEBHOOK_URL`
-   - Value: webhook URL dari Dokploy
-
-5. Push ke `main` → CI → CD trigger Dokploy.
-
-Local Docker test:
+Local test:
 
 ```bash
 cp .env.example .env
 docker network create dokploy-network
 docker compose up --build
-# App: http://localhost:3000
+# Port tidak dipublish ke host; untuk debug lokal sementara ganti expose → ports
 ```
 
 ### Deploy to Vercel
