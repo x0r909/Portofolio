@@ -30,33 +30,28 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build   # Generates static files in /out
 ```
 
-### Deploy to Dokploy (Cloudflare → NPM → Dokploy)
+### Deploy to Dokploy (Proxmox multi-LXC)
 
-Alur homeserver:
-`Internet → Cloudflare → Nginx Proxy Manager → dokploy-traefik:80 → portfolio:APP_PORT`
+LXC terpisah:
+`Cloudflare LXC → NPM LXC → Dokploy LXC (Traefik → portfolio)`
 
-Compose hanya `expose` internal (tidak publish port ke host).
+Antar LXC **tidak ada Docker DNS** — NPM forward ke IP LXC Dokploy.
 
-1. Deploy Compose di Dokploy (path: `./docker-compose.yml`).
-2. Environment — paste isi `.env.example`, ganti `APP_DOMAIN`.
-3. **Dokploy → Domains**:
-   - Host: nilai `APP_DOMAIN`
-   - Service: `portfolio` (`APP_SERVICE`)
-   - Container Port: `3000` (`APP_PORT`)
-   - HTTPS: **OFF**, Certificate: **None**
-4. **NPM → Proxy Host**:
-   - Domain: sama dengan `APP_DOMAIN`
-   - Forward: `http://dokploy-traefik:80` (`NPM_UPSTREAM_HOST` / `NPM_UPSTREAM_PORT`)
-   - SSL di NPM: off (TLS di Cloudflare)
-   - Pastikan NPM ada di `dokploy-network`
-5. **Cloudflare**: arahkan domain/tunnel ke NPM (bukan langsung ke Dokploy).
+1. Paste `.env.example` ke Dokploy Environment; isi:
+   - `APP_DOMAIN`
+   - `DOKPLOY_LXC_HOST` (IP LXC Dokploy)
+   - opsional: `NPM_LXC_HOST`, `CLOUDFLARE_LXC_HOST`
+2. **Dokploy → Domains**: host=`APP_DOMAIN`, service=`portfolio`, port=`3000`, HTTPS off.
+3. **NPM (LXC lain) → Proxy Host**: forward `http://DOKPLOY_LXC_HOST:80`.
+4. **Cloudflare Tunnel (LXC lain)**: hostname → `http://NPM_LXC_HOST:80`.
+5. Pastikan firewall Proxmox mengizinkan path di atas.
 6. Optional: GitHub secret `DOKPLOY_WEBHOOK_URL` untuk CD.
 
 Local test:
 
 ```bash
 cp .env.example .env
-# edit APP_DOMAIN
+# edit APP_DOMAIN + DOKPLOY_LXC_HOST
 docker network create dokploy-network
 docker compose up --build
 ```
