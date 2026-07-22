@@ -1,0 +1,48 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cd-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Dokploy
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+
+    steps:
+      - name: Trigger Dokploy webhook
+        env:
+          DOKPLOY_WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DOKPLOY_WEBHOOK_URL" ]; then
+            echo "DOKPLOY_WEBHOOK_URL secret is not set."
+            echo "GitHub → Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
+
+          REF="${GITHUB_REF:-refs/heads/main}"
+          SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
+
+          echo "Triggering Dokploy (sha=${SHA})..."
+          HTTP_CODE=$(curl -sS -o /tmp/dokploy-response.txt -w "%{http_code}" \
+            -X GET "$DOKPLOY_WEBHOOK_URL")
+
+          echo "HTTP status: $HTTP_CODE"
+          cat /tmp/dokploy-response.txt || true
+          echo
+
+          case "$HTTP_CODE" in
+            2*) echo "Dokploy deploy triggered successfully" ;;
+            *) echo "Dokploy webhook failed"; exit 1 ;;
+          esac

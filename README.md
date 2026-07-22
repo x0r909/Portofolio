@@ -30,6 +30,38 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build   # Generates static files in /out
 ```
 
+### Deploy to Dokploy (Docker Compose)
+
+1. Copy env template and set your domain:
+
+```bash
+cp .env.example .env
+# Edit APP_DOMAIN, APP_NAME, etc.
+```
+
+2. In Dokploy → **Create Service** → **Compose**:
+   - Provider: GitHub
+   - Repository: this repo, branch `main`
+   - Compose Path: `./docker-compose.yml`
+   - Paste the same variables from `.env.example` into Dokploy Environment
+
+3. Domains: either set `APP_DOMAIN` in env (Traefik labels) **or** add the domain in Dokploy UI.
+
+4. Enable the Deploy Webhook in Dokploy, copy the URL, then add GitHub secret:
+   - Name: `DOKPLOY_WEBHOOK_URL`
+   - Value: webhook URL from Dokploy
+
+5. Push to `main` → CI runs (lint, build, docker) → CD triggers Dokploy.
+
+Local Docker test:
+
+```bash
+cp .env.example .env
+# For local without Traefik, create network once:
+docker network create dokploy-network
+docker compose up --build
+```
+
 ### Deploy to Vercel
 
 1. Push your code to GitHub
@@ -46,7 +78,8 @@ Since this is a static export (`output: "export"`), you can also host the `out/`
 | [Tailwind CSS](https://tailwindcss.com/) | Utility-first styling |
 | [Framer Motion](https://www.framer.com/motion/) | Animations |
 | GitHub Actions | CI/CD |
-| Vercel | Deployment |
+| Docker + nginx | Production container |
+| Dokploy | Deployment |
 
 ## 📁 Project Structure
 
@@ -66,7 +99,10 @@ src/
     ├── ContactSection.tsx
     └── Footer.tsx
 
-.github/workflows/ci.yml   # Lint + build on every push/PR
+.github/workflows/ci.yml   # Lint + build + docker on every push/PR
+.github/workflows/cd.yml   # Trigger Dokploy webhook after CI on main
+docker-compose.yml         # Dokploy compose (configured via .env)
+Dockerfile                 # Multi-stage Next.js static → nginx
 ```
 
 ## 🎨 Customization
@@ -81,13 +117,15 @@ src/
 
 ## ✅ CI/CD
 
-The GitHub Actions workflow runs on every push and PR to `main`:
+**CI** (`.github/workflows/ci.yml`) on every push/PR to `main`:
 
-1. Install dependencies
-2. Run ESLint (`npm run lint`)
-3. Build project (`npm run build`)
+1. `npm ci` → lint → build
+2. Docker image build (no push) to catch Dockerfile issues
 
-All checks must pass before merging.
+**CD** (`.github/workflows/cd.yml`) after CI succeeds on `main` push:
+
+1. `POST`/`GET` Dokploy deploy webhook (`DOKPLOY_WEBHOOK_URL` secret)
+2. Dokploy rebuilds from `docker-compose.yml` + `.env`
 
 ## 📧 Contact
 

@@ -1,0 +1,26 @@
+services:
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV:-production}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "${APP_PORT:-3000}"
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=${TRAEFIK_ENABLE:-true}"
+      - "traefik.http.routers.${APP_NAME:-portfolio}.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME:-portfolio}.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}"
+      - "traefik.http.routers.${APP_NAME:-portfolio}.tls.certResolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.services.${APP_NAME:-portfolio}.loadbalancer.server.port=3000"
+
+networks:
+  dokploy-network:
+    external: true
