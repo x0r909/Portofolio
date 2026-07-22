@@ -40,10 +40,10 @@ Cloudflare LXC → NPM LXC → DOKPLOY_LXC_HOST:80 (Traefik) → portfolio:3000
 - App portfolio: **port 3000** internal (Dokploy Domains → Container Port)
 - Compose tidak publish port ke host
 
-1. Paste `.env.example` ke Dokploy Environment; isi `APP_DOMAIN` + `DOKPLOY_LXC_HOST`.
-2. **Dokploy → Domains**: host=`APP_DOMAIN`, service=`portfolio`, container port=`3000`, HTTPS off.
-3. **NPM**: forward `http://DOKPLOY_LXC_HOST:80` (Traefik), domain = `APP_DOMAIN`.
-4. **Cloudflare Tunnel**: arahkan domain ke NPM (LXC Cloudflare → LXC NPM).
+1. Paste `.env.example` ke Dokploy Environment (`NODE_ENV`, `APP_PORT`).
+2. **Dokploy → Domains**: isi domainmu, service=`portfolio`, container port=`3000`, HTTPS off.
+3. **NPM**: forward ke `http://<IP-LXC-Dokploy>:80` (Traefik), domain sama.
+4. **Cloudflare Tunnel**: arahkan domain ke NPM.
 5. Optional: secret `DOKPLOY_WEBHOOK_URL` untuk CD.
 
 ```bash
