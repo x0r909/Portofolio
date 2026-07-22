@@ -30,36 +30,35 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build   # Generates static files in /out
 ```
 
-### Deploy to Dokploy (Domains + Cloudflare Tunnel)
+### Deploy to Dokploy (Cloudflare → NPM → Dokploy)
 
-Bisa dipakai dengan Cloudflare Tunnel **tanpa expose port ke host**.
+Alur homeserver:
+`Internet → Cloudflare → Nginx Proxy Manager → dokploy-traefik:80 → portfolio:APP_PORT`
 
-Alur traffic:
-`Internet → Cloudflare Tunnel → dokploy-traefik:80 → container:APP_PORT`
+Compose hanya `expose` internal (tidak publish port ke host).
 
-1. Deploy compose di Dokploy (Compose Path: `./docker-compose.yml`).
-2. Environment Dokploy — paste dari `.env.example` (`NODE_ENV`, `APP_PORT`).
-3. Tab **Domains** → Add Domain:
-   - Host: `portfolio.yourdomain.com`
-   - Service: `portfolio`
-   - Container Port: `3000` (sama dengan `APP_PORT`)
-   - HTTPS: **OFF**
-   - Certificate: **None** (TLS di Cloudflare)
-4. Cloudflare Tunnel → Published route:
-   - Domain sama dengan di Dokploy
-   - Service type: **HTTP**
-   - URL: `dokploy-traefik:80`  
-     (atau wildcard `*` → `dokploy-traefik:80` untuk semua subdomain)
-5. Pastikan `cloudflared` ada di `dokploy-network` (atau pakai template Cloudflared Dokploy).
-6. Optional: set GitHub secret `DOKPLOY_WEBHOOK_URL` untuk CD otomatis.
+1. Deploy Compose di Dokploy (path: `./docker-compose.yml`).
+2. Environment — paste isi `.env.example`, ganti `APP_DOMAIN`.
+3. **Dokploy → Domains**:
+   - Host: nilai `APP_DOMAIN`
+   - Service: `portfolio` (`APP_SERVICE`)
+   - Container Port: `3000` (`APP_PORT`)
+   - HTTPS: **OFF**, Certificate: **None**
+4. **NPM → Proxy Host**:
+   - Domain: sama dengan `APP_DOMAIN`
+   - Forward: `http://dokploy-traefik:80` (`NPM_UPSTREAM_HOST` / `NPM_UPSTREAM_PORT`)
+   - SSL di NPM: off (TLS di Cloudflare)
+   - Pastikan NPM ada di `dokploy-network`
+5. **Cloudflare**: arahkan domain/tunnel ke NPM (bukan langsung ke Dokploy).
+6. Optional: GitHub secret `DOKPLOY_WEBHOOK_URL` untuk CD.
 
 Local test:
 
 ```bash
 cp .env.example .env
+# edit APP_DOMAIN
 docker network create dokploy-network
 docker compose up --build
-# Port tidak dipublish ke host; untuk debug lokal sementara ganti expose → ports
 ```
 
 ### Deploy to Vercel
