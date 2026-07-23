@@ -32,30 +32,29 @@ npm run build   # Generates static files in /out
 
 ### Deploy to Dokploy (Proxmox multi-LXC)
 
-Tanpa Traefik / Dokploy Domains — compose publish port ke host LXC:
-
 ```
-Browser → Cloudflare Tunnel → NPM LXC → DOKPLOY_LXC_IP:3080 → portfolio:3000
+Browser → Cloudflare Tunnel → NPM LXC → DOKPLOY_LXC_IP:80 (Traefik) → portfolio:3000
 ```
 
 | Lapisan | Peran |
 |---|---|
 | Cloudflare Tunnel | Hostname publik → `http://<IP-NPM>:80` |
-| NPM | Proxy Host domain → `http://<IP-Dokploy>:3080` |
-| Dokploy | Build/deploy compose saja (jangan set Domains) |
-| Docker `ports` | Host `3080` → container `3000` |
+| NPM | Proxy Host → `http://<IP-Dokploy>:80` (Traefik) |
+| Dokploy Domains | Domain + container port `3000` (inject label Traefik) |
+| Compose | `expose` + `dokploy-network` (jangan commit label Traefik dari UI) |
 
-1. Paste `.env.example` ke Dokploy Environment (`NODE_ENV`, `APP_PORT`, `HOST_PORT`).
-2. Deploy / rebuild di Dokploy. **Skip Domains** (tidak pakai Traefik).
-3. Verifikasi di LXC Dokploy: `curl -I http://127.0.0.1:3080` → harus 200.
-4. **NPM** Proxy Host: domainmu → Forward `http://<IP-LXC-Dokploy>:3080` (HTTP).
-5. **Cloudflare Tunnel**: Public Hostname → Service `http://<IP-NPM>:80` (atau port NPM-mu).
-6. Optional: secret `DOKPLOY_WEBHOOK_URL` untuk CD.
+1. Paste `.env.example` ke Dokploy Environment (`NODE_ENV`, `APP_PORT`).
+2. **Dokploy → Domains**: domain (mis. `augie.my.id`), service=`portfolio`, container port=`3000`, HTTPS off jika SSL di Cloudflare/NPM.
+3. **NPM**: forward ke `http://<IP-LXC-Dokploy>:80` (bukan :3080 / :3000).
+4. **Cloudflare Tunnel**: Public Hostname → `http://<IP-NPM>:80`.
+5. Optional: secret `DOKPLOY_WEBHOOK_URL` untuk CD.
+
+Label Traefik di compose runtime (dari fitur Domains) digenerate Dokploy — biarkan di panel, tidak perlu di-commit ke repo.
 
 ```bash
 cp .env.example .env
+docker network create dokploy-network
 docker compose up --build
-# App: http://127.0.0.1:3080
 ```
 
 ### Deploy to Vercel

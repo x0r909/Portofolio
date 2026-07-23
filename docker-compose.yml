@@ -10,6 +10,13 @@ services:
       - .env
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-    # Publish to Dokploy LXC host (avoid :3000 — used by Dokploy UI)
-    ports:
-      - "${HOST_PORT:-3080}:${APP_PORT:-3000}"
+    # Internal only — Dokploy Domains / Traefik routes here
+    # (NPM → LXC Dokploy:80 → Traefik → container :3000)
+    expose:
+      - "${APP_PORT:-3000}"
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
