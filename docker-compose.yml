@@ -10,12 +10,19 @@ services:
       - .env
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-    # Internal only — Dokploy Domains / Traefik routes here
+    # Internal only — Traefik routes here
     # (NPM → LXC Dokploy:80 → Traefik → container :3000)
     expose:
       - "${APP_PORT:-3000}"
     networks:
       - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.augie-portfolio-web.rule=Host(`augie.my.id`)
+      - traefik.http.routers.augie-portfolio-web.entrypoints=web
+      - traefik.http.routers.augie-portfolio-web.service=augie-portfolio-web
+      - traefik.http.services.augie-portfolio-web.loadbalancer.server.port=3000
 
 networks:
   dokploy-network:
