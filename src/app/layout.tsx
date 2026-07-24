@@ -1,40 +1,41 @@
 import type { Metadata } from "next";
-import { Inter, Orbitron, Space_Mono } from "next/font/google";
+import { Archivo_Black, Space_Grotesk } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 
-const inter = Inter({
+const archivoBlack = Archivo_Black({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: "400",
+  variable: "--font-head",
+  display: "swap",
 });
 
-const orbitron = Orbitron({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-orbitron",
-});
-
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-mono",
+  variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Augie Aristito Sudiarto | Cyber Security Portfolio",
   description:
-    "Portfolio website of Augie Aristito Sudiarto, a Cyber Security Engineering student at Politeknik Negeri Cilacap. Retro-cyber style portfolio showcasing projects and skills.",
+    "Portfolio of Augie Aristito Sudiarto — Cybersecurity Engineering student, Full Stack Developer, Network Engineer, and AI/ML Enthusiast. Secure software, networking, and applied AI.",
   keywords: [
     "cyber security",
     "portfolio",
-    "retro cyber",
     "augie aristito",
     "security engineering",
-    "web development",
+    "full stack developer",
+    "network engineer",
+    "AI ML",
+    "RetroUI",
   ],
   openGraph: {
     title: "Augie Aristito Sudiarto | Cyber Security Portfolio",
-    description: "Retro-cyber style portfolio showcasing projects and skills.",
+    description:
+      "Cybersecurity Engineering student portfolio — secure software, networking, and applied AI.",
     type: "website",
   },
 };
@@ -46,47 +47,21 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${inter.variable} ${orbitron.variable} ${spaceMono.variable}`}
+      lang="id"
+      suppressHydrationWarning
+      className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-      <body className="min-h-screen bg-cyber-bg text-white grid-bg relative overflow-x-hidden">
-        {/* Scan line effect */}
-        <div className="fixed top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyber-cyan to-transparent opacity-20 animate-scan-line -z-10"></div>
-
-        {/* Grid overlay */}
-        <div className="fixed inset-0 pointer-events-none -z-20 opacity-5 grid-bg"></div>
-
-        {/* Gradient background */}
-        <div className="fixed inset-0 bg-gradient-to-br from-cyber-bg via-cyber-surface to-cyber-bg -z-30"></div>
-
-        {/* Matrix rain effect (background only) */}
-        <div className="fixed inset-0 pointer-events-none -z-40 opacity-5">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute top-0 text-cyber-green font-mono text-xs animate-matrix-rain"
-              style={{
-                left: `${(i * 5) % 100}%`,
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: `${5 + (i % 3)}s`,
-              }}
-            >
-              {Array.from({ length: 30 }).map((_, j) => (
-                <div key={j} className="opacity-70">
-                  {String.fromCharCode(48 + ((i * j) % 74))}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <Navigation />
-        <main className="min-h-screen pt-16">{children}</main>
-        <Footer />
+      <body className="min-h-screen bg-background text-foreground font-sans retro-pattern">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
