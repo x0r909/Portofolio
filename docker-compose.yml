@@ -1,23 +1,7 @@
 services:
   portfolio:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: ${NODE_ENV:-production}
+    image: ghcr.io/x0r909/portfolio-augie:latest
+    pull_policy: always
     restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-    # Internal only — Dokploy Domains injects Traefik labels at deploy
-    # Flow: Cloudflare → NPM → Dokploy LXC:80 (Traefik) → portfolio:3000
-    # Jangan publish ports / jangan commit label Traefik (nabrak Dokploy)
-    expose:
-      - "${APP_PORT:-3000}"
-    networks:
-      - dokploy-network
-
-networks:
-  dokploy-network:
-    external: true
+    ports:
+      - "${APP_PORT:-3000}:3000"
