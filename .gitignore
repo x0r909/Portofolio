@@ -52,3 +52,18 @@ coverage/
 *.log
 *.patch
 *.orig
+
+# AI agents / local tooling config
+.claude/
+.claude.json
+.cursor/
+.codex/
+.gemini/
+.opencode/
+.codebuddy/
+.joycode/
+.qwen/
+.agents/
+.zed/
+.hermes/
+.openclaw/

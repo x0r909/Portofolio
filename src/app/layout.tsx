@@ -18,10 +18,47 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const SITE_URL = "https://augie.my.id";
+
+const SITE_TITLE = "Augie Aristito Sudiarto | Cyber Security Portfolio";
+const SITE_DESCRIPTION =
+  "Portfolio of Augie Aristito Sudiarto — Cybersecurity Engineering student, Full Stack Developer, Network Engineer, and AI/ML Enthusiast. Secure software, networking, and applied AI.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_TITLE,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: "id",
+    },
+    {
+      "@type": "Person",
+      name: "Augie Aristito Sudiarto",
+      url: SITE_URL,
+      email: "mailto:augie.aristitoazka@gmail.com",
+      jobTitle: "Cybersecurity Engineering Student",
+      knowsAbout: [
+        "Cyber Security",
+        "Full Stack Development",
+        "Network Engineering",
+        "Artificial Intelligence",
+        "Machine Learning",
+      ],
+      sameAs: [
+        "https://github.com/x0r909",
+        "https://linkedin.com/in/augiearistito",
+      ],
+    },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "Augie Aristito Sudiarto | Cyber Security Portfolio",
-  description:
-    "Portfolio of Augie Aristito Sudiarto — Cybersecurity Engineering student, Full Stack Developer, Network Engineer, and AI/ML Enthusiast. Secure software, networking, and applied AI.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: [
     "cyber security",
     "portfolio",
@@ -32,11 +69,27 @@ export const metadata: Metadata = {
     "AI ML",
     "RetroUI",
   ],
+  authors: [{ name: "Augie Aristito Sudiarto" }],
+  creator: "Augie Aristito Sudiarto",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Augie Aristito Sudiarto | Cyber Security Portfolio",
+    title: SITE_TITLE,
     description:
       "Cybersecurity Engineering student portfolio — secure software, networking, and applied AI.",
     type: "website",
+    url: "/",
+    siteName: SITE_TITLE,
+    locale: "id_ID",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  verification: {
+    google: "googled0603f47ddea834e",
   },
 };
 
@@ -58,6 +111,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
           <Navbar />
           <main>{children}</main>
           <Footer />
