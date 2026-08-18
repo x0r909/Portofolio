@@ -28,8 +28,8 @@ npm run build   # static files in /out
 
 Pushes to `main` and pull requests trigger CI via GitHub Actions (`.github/workflows/ci.yml`):
 
-1. **Lint & Build** — runs `next lint` + `next build`, uploads the `out/` directory as a build artifact
-2. **Docker Image** — builds and pushes a Docker image to `ghcr.io/<repo>` (main branch only, not on PRs)
+1. **Lint, Typecheck & Build** — runs `next lint` + `tsc --noEmit` + `next build`, uploads the `out/` directory as a build artifact
+2. **Docker Image** — builds and pushes a Docker image to `ghcr.io/<repo>` (main branch / version tags only, not on PRs)
 
 You can download the static build artifact or pull the image from GHCR for self-hosting.
 

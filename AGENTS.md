@@ -26,7 +26,7 @@ Next.js 15 (App Router) static-export portfolio: React 19, TypeScript strict, Ta
 
 ## Build / Deploy
 
-- CI (`.github/workflows/ci.yml`): Docker only — builds and pushes `ghcr.io/x0r909/portfolio-augie` on `main`/`v*` tags, no PR trigger, no lint/build job. README's CI section is stale
+- CI (`.github/workflows/ci.yml`): `quality` job (lint → `tsc --noEmit` → `next build` → uploads `out/` artifact) runs on PRs, `main`, and `v*` tags; `docker` job pushes `ghcr.io/x0r909/portfolio-augie` on `main`/`v*` tags only
 - Dockerfile: node:20-alpine builds → nginx:1.27-alpine serves `out/` on :3000 with `nginx.conf` (gzip, security headers, 30d asset cache, SPA fallback)
 - `docker-compose.yml`: pulls the GHCR image, maps `${APP_PORT:-3000}:3000`
 - `setup-prod.sh` is broken: it references `ecosystem.config.js` (PM2), which does not exist in the repo — prefer the Docker path
