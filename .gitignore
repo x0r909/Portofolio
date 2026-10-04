@@ -53,6 +53,9 @@ coverage/
 *.patch
 *.orig
 
+# Raw source assets (originals; web-ready copies live in public/)
+assets-src/
+
 # AI agents / local tooling config
 .claude/
 .claude.json

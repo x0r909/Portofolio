@@ -5,7 +5,8 @@ Personal portfolio built with **Next.js + TypeScript + Tailwind CSS v4** and a *
 ## Features
 
 - Sticky navbar with dark mode toggle
-- Sections: Hero, About, Skills, Projects, Contact
+- Sections: Hero, About, Skills, Projects, Certifications, Contact
+- Downloadable CV and certificate PDFs
 - Light / dark theme via `next-themes`
 - Static export — zero runtime server
 
@@ -26,10 +27,10 @@ npm run build   # static files in /out
 
 ## CI / CD
 
-Pushes to `main` and pull requests trigger CI via GitHub Actions (`.github/workflows/ci.yml`):
+Every branch push, pull request, and version tag triggers CI via GitHub Actions (`.github/workflows/ci.yml`):
 
 1. **Lint, Typecheck & Build** — runs `next lint` + `tsc --noEmit` + `next build`, uploads the `out/` directory as a build artifact
-2. **Docker Image** — builds and pushes a Docker image to `ghcr.io/<repo>` (main branch / version tags only, not on PRs)
+2. **Docker Image** (CD) — builds and pushes a Docker image to `ghcr.io/<repo>`, on `main` only
 
 You can download the static build artifact or pull the image from GHCR for self-hosting.
 
@@ -61,10 +62,15 @@ src/
     About.tsx
     Skills.tsx
     Projects.tsx
+    Certifications.tsx
     Contact.tsx
     Navbar.tsx
     Footer.tsx
   lib/utils.ts         # cn() helper
+public/
+  cv/                  # downloadable CV
+  certificates/        # downloadable certificate PDFs
+  images/              # photos + logo
 ```
 
 ## License
