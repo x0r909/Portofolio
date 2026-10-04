@@ -2,18 +2,14 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  // `resolvedTheme` is undefined until next-themes hydrates, which is exactly
+  // the "not mounted yet" signal — no effect needed.
+  if (!resolvedTheme) {
     return (
       <Button variant="outline" size="icon" aria-label="Toggle theme" disabled>
         <Sun className="size-4" />

@@ -29,7 +29,7 @@ npm run build   # static files in /out
 
 Every branch push, pull request, and version tag triggers CI via GitHub Actions (`.github/workflows/ci.yml`):
 
-1. **Lint, Typecheck & Build** — runs `next lint` + `tsc --noEmit` + `next build`, uploads the `out/` directory as a build artifact
+1. **Lint, Typecheck & Build** — runs `eslint` + `tsc --noEmit` + `next build`, uploads the `out/` directory as a build artifact
 2. **Docker Image** (CD) — builds and pushes a Docker image to `ghcr.io/<repo>`, on `main` only
 
 Security scanning runs alongside it:
@@ -51,7 +51,7 @@ docker run -p 3000:3000 ghcr.io/x0r909/portfolio-augie:latest
 
 | Tool | Purpose |
 |---|---|
-| Next.js 15 (App Router) | React framework, static export |
+| Next.js 16 (App Router) | React framework, static export |
 | Tailwind CSS v4 | Utility styling |
 | next-themes | Light / dark mode |
 | Radix UI | Accessible primitives |

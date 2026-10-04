@@ -1,11 +1,11 @@
 # AGENTS.md
 
-Next.js 15 (App Router) static-export portfolio: React 19, TypeScript strict, Tailwind CSS v4, shadcn/RetroUI primitives, next-themes. No backend, no runtime server.
+Next.js 16 (App Router) static-export portfolio: React 19, TypeScript strict, Tailwind CSS v4, shadcn/neobrutalism primitives, next-themes. No backend, no runtime server. Node ≥24.
 
 ## Commands
 
 - `npm run dev` — dev server on http://localhost:3000
-- `npm run lint` — ESLint via `next lint`
+- `npm run lint` — ESLint CLI (flat config `eslint.config.mjs`; `next lint` removed in Next 16)
 - `npx tsc --noEmit` — typecheck (no npm script exists)
 - `npm run build` — static export to `out/`
 - Do NOT use `npm run start`: `next start` is unsupported with `output: "export"` (next.config.ts). Serve `out/` statically (the Docker/nginx path is the deploy flow)
@@ -32,3 +32,13 @@ Next.js 15 (App Router) static-export portfolio: React 19, TypeScript strict, Ta
 - Dockerfile: node:20-alpine builds → nginx:1.27-alpine serves `out/` on :3000 with `nginx.conf` (gzip, security headers, 30d asset cache, SPA fallback)
 - `docker-compose.yml`: pulls the GHCR image, maps `${APP_PORT:-3000}:3000`
 - `setup-prod.sh` is broken: it references `ecosystem.config.js` (PM2), which does not exist in the repo — prefer the Docker path
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
