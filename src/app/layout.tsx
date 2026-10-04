@@ -39,7 +39,12 @@ const jsonLd = {
       name: "Augie Aristito Sudiarto",
       url: SITE_URL,
       email: "mailto:augie.aristitoazka@gmail.com",
-      jobTitle: "Cybersecurity Engineering Student",
+      jobTitle: "Cybersecurity Engineering Student & COO Teknostudio",
+      worksFor: {
+        "@type": "Organization",
+        name: "Teknostudio",
+        url: "https://teknostudio.id",
+      },
       knowsAbout: [
         "Cyber Security",
         "Full Stack Development",

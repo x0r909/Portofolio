@@ -20,9 +20,16 @@ FROM nginx:1.27-alpine AS runner
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/out /usr/share/nginx/html
 
+# Run as the image's unprivileged nginx user (listens on 3000, so no root
+# needed). nginx writes its pid and temp files here.
+RUN touch /var/run/nginx.pid \
+ && chown -R nginx:nginx /var/cache/nginx /var/run/nginx.pid
+
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1
+
+USER nginx
 
 CMD ["nginx", "-g", "daemon off;"]

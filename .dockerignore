@@ -20,3 +20,4 @@ yarn-error.log*
 ecosystem.config.js
 setup.sh
 setup-prod.sh
+assets-src
