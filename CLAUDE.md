@@ -32,6 +32,7 @@ Do **not** use `npm run start`: `next start` is unsupported with `output: "expor
 ## Build / Deploy
 
 - CI (`.github/workflows/ci.yml`): the `quality` job (lint → `tsc --noEmit` → `next build` → uploads `out/`) runs on every branch push, PRs, and `v*` tags; the `docker` job (CD) pushes `ghcr.io/x0r909/portfolio-augie` on `main` only
+- Security workflows: `codeql.yml` (CodeQL `security-extended`, `main` + PRs + weekly) and `security.yml` (Dependency Review on PRs, Trivy fs scan for vulns/misconfig/secrets → SARIF). Both need GitHub Advanced Security, which is free on this public repo
 - Dockerfile: node:20-alpine builds → nginx:1.27-alpine serves `out/` on :3000 using `nginx.conf` (gzip, security headers, 30d asset cache, SPA fallback)
 - `docker-compose.yml` pulls the GHCR image and maps `${APP_PORT:-3000}:3000`
 - `setup-prod.sh` is broken — it runs `pm2 start ecosystem.config.js`, and no `ecosystem.config.js` exists in the repo. Prefer the Docker path

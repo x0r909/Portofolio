@@ -32,6 +32,12 @@ Every branch push, pull request, and version tag triggers CI via GitHub Actions 
 1. **Lint, Typecheck & Build** — runs `next lint` + `tsc --noEmit` + `next build`, uploads the `out/` directory as a build artifact
 2. **Docker Image** (CD) — builds and pushes a Docker image to `ghcr.io/<repo>`, on `main` only
 
+Security scanning runs alongside it:
+
+- **CodeQL** (`.github/workflows/codeql.yml`) — static analysis of the JavaScript/TypeScript source, on `main`, PRs, and a weekly schedule
+- **Dependency Review** (`.github/workflows/security.yml`) — blocks PRs that introduce high-severity vulnerable dependencies
+- **Trivy** — scans dependencies, config, and secrets for HIGH/CRITICAL findings, uploaded as SARIF to the Security tab
+
 You can download the static build artifact or pull the image from GHCR for self-hosting.
 
 ### Pull the Docker image
