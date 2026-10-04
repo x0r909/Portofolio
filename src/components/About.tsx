@@ -1,4 +1,8 @@
 import Image from "next/image";
+import { HighlightCard } from "@/components/highlight-card";
+import { OffsetFrame } from "@/components/offset-frame";
+import { Section } from "@/components/section";
+import { SectionHeader } from "@/components/section-header";
 import {
   Card,
   CardContent,
@@ -6,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SECTION_ACCENT } from "@/lib/accents";
 
 const highlights = [
   "Secure software development & ethical hacking",
@@ -18,120 +22,102 @@ const highlights = [
 
 export function About() {
   return (
-    <section id="about" className="border-y-2 border-border bg-muted/40">
-      <div className="section-container">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <Badge variant="secondary" className="mb-3">
-              About
-            </Badge>
-            <h2 className="font-head text-3xl md:text-5xl">Who I Am</h2>
-          </div>
-          <div className="size-16 overflow-hidden border-2 border-border shadow-md md:size-20">
+    <Section id="about" banded>
+      <SectionHeader
+        eyebrow="About"
+        title="Who I Am"
+        accent={SECTION_ACCENT.about}
+      />
+
+      <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <OffsetFrame accent="bg-retro-pink" offset="sm">
+          <div className="border-2 border-border bg-card">
             <Image
-              src="/images/foto-closeup.jpg"
-              alt="Augie Aristito Sudiarto"
-              width={80}
-              height={80}
-              className="h-full w-full object-cover"
+              src="/images/foto-sidang.jpg"
+              alt="Augie saat sidang reorganisasi HIMATRIS"
+              width={600}
+              height={400}
+              className="h-auto w-full"
               unoptimized
             />
+            <p className="border-t-2 border-border px-3 py-2 font-mono text-xs text-muted-foreground">
+              Sidang Reorganisasi HIMATRIS
+            </p>
           </div>
-        </div>
+        </OffsetFrame>
 
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="space-y-6">
-            <Card className="hover-lift">
-              <CardHeader>
-                <CardTitle className="font-head text-xl md:text-2xl">
-                  Cybersecurity Engineering Student
-                </CardTitle>
-                <CardDescription className="text-base">
-                  Politeknik Negeri Cilacap — Rekayasa Keamanan Siber
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 text-base leading-relaxed text-foreground/90">
-                <p>
-                  Cybersecurity Engineering student dengan minat kuat pada secure
-                  software development, ethical hacking, enterprise networking,
-                  Linux administration, dan server infrastructure.
-                </p>
-                <p>
-                  Full stack developer (web &amp; Android/Kotlin+Jetpack
-                  Compose), serta penerapan AI/ML untuk masalah nyata. Terus
-                  belajar cloud computing dan DevSecOps.
-                </p>
-              </CardContent>
-            </Card>
+        <div className="space-y-4">
+          <Card className="hover-lift">
+            <CardHeader>
+              <CardTitle className="font-head text-xl md:text-2xl">
+                Cybersecurity Engineering Student
+              </CardTitle>
+              <CardDescription className="text-base">
+                Politeknik Negeri Cilacap — Rekayasa Keamanan Siber
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-base leading-relaxed text-foreground/90">
+              <p>
+                Cybersecurity Engineering student dengan minat kuat pada secure
+                software development, ethical hacking, enterprise networking,
+                Linux administration, dan server infrastructure.
+              </p>
+              <p>
+                Full stack developer (web &amp; Android/Kotlin+Jetpack
+                Compose), serta penerapan AI/ML untuk masalah nyata. Terus
+                belajar cloud computing dan DevSecOps.
+              </p>
+            </CardContent>
+          </Card>
 
-            <Card className="hover-lift">
-              <CardHeader className="flex-row items-center gap-3">
-                <div className="size-10 shrink-0 overflow-hidden border-2 border-border">
-                  <Image
-                    src="/images/logo-teknostudio.png"
-                    alt="Teknostudio"
-                    width={40}
-                    height={40}
-                    className="h-full w-full object-contain"
-                    unoptimized
-                  />
-                </div>
-                <div>
-                  <CardTitle className="font-head text-lg">
-                    <a
-                      href="https://teknostudio.id"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline underline-offset-2"
-                    >
-                      Teknostudio
-                    </a>
-                  </CardTitle>
-                  <CardDescription>
-                    Co-Founder &amp; Chief Operation Officer (COO)
-                  </CardDescription>
-                </div>
-              </CardHeader>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card className="border-2 border-border bg-retro-yellow text-black shadow-md hover-lift dark:bg-primary">
-              <CardHeader>
-                <CardTitle className="font-head text-lg">Philosophy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <blockquote className="font-head text-xl leading-snug md:text-2xl">
-                  &ldquo;Build Secure. Learn Continuously. Innovate with
-                  Purpose.&rdquo;
-                </blockquote>
-                <ul className="mt-6 space-y-2 text-sm">
-                  {highlights.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="font-bold">▸</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <div className="relative">
-              <div className="overflow-hidden border-2 border-border shadow-md">
+          <Card className="hover-lift">
+            <CardHeader className="flex-row items-center gap-3">
+              <div className="size-10 shrink-0 overflow-hidden border-2 border-border">
                 <Image
-                  src="/images/foto-sidang.jpg"
-                  alt="Augie saat sidang reorganisasi HIMATRIS"
-                  width={600}
-                  height={400}
-                  className="h-auto w-full"
+                  src="/images/logo-teknostudio.png"
+                  alt="Teknostudio"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-contain"
                   unoptimized
                 />
               </div>
-              <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full border-2 border-border bg-retro-pink" />
-            </div>
-          </div>
+              <div>
+                <CardTitle className="font-head text-lg">
+                  <a
+                    href="https://teknostudio.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block py-0.5 underline underline-offset-2"
+                  >
+                    Teknostudio
+                  </a>
+                </CardTitle>
+                <CardDescription>
+                  Co-Founder &amp; Chief Operation Officer (COO)
+                </CardDescription>
+              </div>
+            </CardHeader>
+          </Card>
         </div>
       </div>
-    </section>
+
+      <HighlightCard title="Philosophy" className="mt-6">
+        <div className="md:grid md:grid-cols-2 md:gap-6">
+          <blockquote className="font-head text-xl leading-snug md:text-2xl">
+            &ldquo;Build Secure. Learn Continuously. Innovate with
+            Purpose.&rdquo;
+          </blockquote>
+          <ul className="mt-6 space-y-2 text-sm md:mt-0">
+            {highlights.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="font-bold">▸</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </HighlightCard>
+    </Section>
   );
 }

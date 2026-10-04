@@ -8,18 +8,20 @@
   --font-sans: var(--font-sans);
   --radius: var(--radius);
 
-  --shadow-xs: 1px 1px 0 0 var(--border);
-  --shadow-sm: 2px 2px 0 0 var(--border);
-  --shadow: 3px 3px 0 0 var(--border);
-  --shadow-md: 4px 4px 0 0 var(--border);
-  --shadow-lg: 6px 6px 0 0 var(--border);
-  --shadow-xl: 10px 10px 0 1px var(--border);
-  --shadow-2xl: 16px 16px 0 1px var(--border);
+  --shadow-xs: 1px 1px 0 0 var(--shadow-color);
+  --shadow-sm: 2px 2px 0 0 var(--shadow-color);
+  --shadow: 3px 3px 0 0 var(--shadow-color);
+  --shadow-md: 4px 4px 0 0 var(--shadow-color);
+  --shadow-lg: 6px 6px 0 0 var(--shadow-color);
+  --shadow-xl: 10px 10px 0 1px var(--shadow-color);
+  --shadow-2xl: 16px 16px 0 1px var(--shadow-color);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
@@ -47,24 +49,29 @@
 :root {
   --radius: 0;
   --background: #fff7e8;
-  --foreground: #000;
+  --foreground: #1a1815;
   --card: #fff;
-  --card-foreground: #000;
+  --card-foreground: #1a1815;
+  --popover: #fff;
+  --popover-foreground: #1a1815;
   --primary: #ffdc58;
-  --primary-hover: #ffd12e;
+  --primary-hover: #ffc700;
   --primary-foreground: #000;
-  --secondary: #000;
-  --secondary-hover: #262626;
-  --secondary-foreground: #fff;
-  --muted: #efe7d6;
-  --muted-foreground: #6b6355;
+  --secondary: #1a1815;
+  --secondary-hover: #33302a;
+  --secondary-foreground: #fff7e8;
+  --muted: #f5eedd;
+  --muted-foreground: #6b6459;
   --accent: #ffe7a3;
-  --accent-foreground: #000;
+  --accent-foreground: #1a1815;
   --destructive: #e63946;
   --destructive-foreground: #fff;
   --border: #000;
   --input: #fff;
-  --ring: #000;
+  /* Deliberately not upstream's yellow: a yellow focus ring on the cream
+     ground is ~1.4:1. Dark keeps the yellow (see .dark). */
+  --ring: #1a1815;
+  --shadow-color: #000000;
 }
 
 .dark {
@@ -72,14 +79,16 @@
   --foreground: #f5f0e6;
   --card: #262320;
   --card-foreground: #f5f0e6;
+  --popover: #262320;
+  --popover-foreground: #f5f0e6;
   --primary: #ffdc58;
-  --primary-hover: #ffd12e;
+  --primary-hover: #ffc700;
   --primary-foreground: #000;
-  --secondary: #3a352f;
-  --secondary-hover: #4a443c;
-  --secondary-foreground: #f5f0e6;
-  --muted: #2e2a24;
-  --muted-foreground: #b3ac9e;
+  --secondary: #f5f0e6;
+  --secondary-hover: #ddd6c6;
+  --secondary-foreground: #1a1815;
+  --muted: #38342b;
+  --muted-foreground: #a89f8f;
   --accent: #38342b;
   --accent-foreground: #f5f0e6;
   --destructive: #ff6b6b;
@@ -87,6 +96,9 @@
   --border: #000;
   --input: #262320;
   --ring: #ffdc58;
+  /* Charcoal, not black — a black offset on the near-black ground reads as no
+     shadow at all. This is the whole reason shadow-color is separate. */
+  --shadow-color: #4a443c;
 }
 
 @layer base {
@@ -132,7 +144,10 @@
 }
 
 @layer utilities {
-  .font-head {
+  .font-head,
+  /* Upstream neobrutalism components reference `cn-font-heading`; alias it so a
+     registry pull doesn't silently fall back to the body font. */
+  .cn-font-heading {
     font-family: var(--font-head), ui-sans-serif, system-ui, sans-serif;
   }
 
@@ -161,5 +176,9 @@
 
   .hover-lift:hover {
     @apply -translate-x-0.5 -translate-y-0.5 shadow-lg;
+  }
+
+  .hover-lift:active {
+    @apply translate-x-0.5 translate-y-0.5 shadow-sm;
   }
 }

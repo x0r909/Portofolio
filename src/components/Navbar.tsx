@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,9 @@ const navLinks = [
   { href: "#contact", label: "Contact" },
 ] as const;
 
+const linkClass =
+  "font-head text-sm no-underline rounded px-3 py-1.5 text-foreground/80 transition-colors duration-200 hover:bg-muted/60 hover:text-foreground";
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
 
@@ -26,18 +29,12 @@ export function Navbar() {
           className="font-head text-lg tracking-tight text-foreground no-underline md:text-xl"
         >
           AUGIE.A.S
+          <span className="mt-0.5 block h-1 w-full bg-primary" />
         </a>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "no-underline"
-              )}
-            >
+            <a key={link.href} href={link.href} className={linkClass}>
               {link.label}
             </a>
           ))}
@@ -60,15 +57,12 @@ export function Navbar() {
 
       {open && (
         <div className="border-t-2 border-border bg-card px-4 py-4 md:hidden">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "justify-start no-underline"
-                )}
+                className={cn(linkClass, "py-2")}
                 onClick={() => setOpen(false)}
               >
                 {link.label}
