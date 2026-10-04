@@ -177,4 +177,8 @@
   .hover-lift:hover {
     @apply -translate-x-0.5 -translate-y-0.5 shadow-lg;
   }
+
+  .hover-lift:active {
+    @apply translate-x-0.5 translate-y-0.5 shadow-sm;
+  }
 }

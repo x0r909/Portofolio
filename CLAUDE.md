@@ -21,12 +21,20 @@ Do **not** use `npm run start`: `next start` is unsupported with `output: "expor
 - `src/app/` also holds `robots.ts`, `sitemap.ts`, `opengraph-image.tsx`, `icon.svg` — the metadata routes are code, not static files
 - Sections (Hero, About, Skills, Projects, Contact) are server components; only interactive ones carry `"use client"` (Navbar, Contact, Theme*, `ui/accordion`, `ui/label`, `ui/avatar`)
 - `src/components/ui/` — shadcn new-york primitives pulled from the neobrutalism registry (`components.json` → `registries`, `https://neobrutalism.com/r/radix/{name}.json`). Preserve the cva / `data-slot` patterns when editing. **Do not blanket-`--overwrite` these files**: the upstream `button.tsx` still hardcodes `border-black` (a token leak this repo fixed) and `accordion.tsx` still ships a hover shadow-shrink that contradicts the site's single hover rule — patch surgically instead
+- `src/components/` (outside `ui/`) holds hand-rolled site composites — these are **not** registry-managed, so edit them directly:
+  - `section.tsx` — `{ id, banded?, children }`; each section declares its own ground so the page rhythm lives in the sections, not `page.tsx`
+  - `section-header.tsx` — `{ eyebrow, title, description?, accent }`; the badge + `h2` + muted paragraph repeated by every section. `accent` is required and typed
+  - `accent-bar.tsx` / `offset-frame.tsx` / `highlight-card.tsx` — the colored card strip, the offset color plate behind a block, and the yellow callout
+- `src/lib/accents.ts` — the `Accent` union (literal `bg-retro-*` strings; Tailwind v4's scanner cannot see `bg-${x}` interpolation, so never build these by concatenation) plus `SECTION_ACCENT`, which gives each section exactly one accent so no two sections collide
 - Path alias `@/*` → `src/*`; `cn()` from `src/lib/utils.ts` merges clashing Tailwind classes
 
 ## Styling
 
 - Tailwind v4 is CSS-first: every token lives in `src/app/globals.css` (`@theme inline` + `:root` / `.dark`). There is **no** `tailwind.config.*` — new tokens go in the CSS
 - Neobrutalist system: `--radius: 0`, 2px black borders (`--border`), hard offset shadows (`--shadow-*`, no blur). Use theme tokens (`bg-primary`, `border-border`, `shadow-md`) and the `retro-*` accents, never Tailwind's default palette or shadow scale
+- **`--shadow-*` resolve to `--shadow-color`, not `--border`.** `--border` is `#000` in *both* themes, so keying shadows to it makes them near-invisible black-on-charcoal in dark mode. `--shadow-color` is `#000000` light / `#4a443c` dark — keep the two separate
+- **One hover rule**, applied by the `hover-lift` utility and mirrored in `ui/button.tsx`: `shadow-md` at rest → `hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-lg` → `active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm`. Do not introduce a competing hover (press-down or shadow-shrink)
+- **Section rhythm is strict alternation** — Hero plain → About band → Skills plain → Projects band → Certifications plain → Contact band. A band is `<Section banded>`, which adds `border-y-2 border-border bg-muted/40`
 - Custom utilities worth reusing: `section-container` (page-width section padding), `hover-lift` (translate + shadow on hover), `retro-pattern` (dotted page background)
 - Dark mode is next-themes with the class strategy via `@custom-variant dark` — anything new that uses color needs `dark:` variants
 - Headings get `font-head` automatically from a base-layer rule; copy on the site is Indonesian (`<html lang="id">`), so match that tone for user-facing text

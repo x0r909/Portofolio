@@ -1,4 +1,8 @@
 import { Code2, ExternalLink } from "lucide-react";
+import { AccentBar } from "@/components/accent-bar";
+import { OffsetFrame } from "@/components/offset-frame";
+import { Section } from "@/components/section";
+import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -9,17 +13,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SECTION_ACCENT, type Accent } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
-const projects = [
-  {
-    title: "AetherOS",
-    description:
-      "Sistem operasi hobi untuk arsitektur x86_64 yang dibangun dari nol dengan C dan Assembly. Booting via UEFI, console serial + framebuffer, dan self-test bawaan.",
-    stack: ["C", "Assembly", "UEFI", "x86_64"],
-    github: "https://github.com/x0r909/AetherOS",
-    accent: "bg-retro-orange",
-  },
+type Project = {
+  title: string;
+  description: string;
+  stack: readonly string[];
+  github: string;
+  accent: Accent;
+};
+
+const featured: Project = {
+  title: "AetherOS",
+  description:
+    "Sistem operasi hobi untuk arsitektur x86_64 yang dibangun dari nol dengan C dan Assembly. Booting via UEFI, console serial + framebuffer, dan self-test bawaan.",
+  stack: ["C", "Assembly", "UEFI", "x86_64"],
+  github: "https://github.com/x0r909/AetherOS",
+  accent: "bg-retro-orange",
+};
+
+const projects: readonly Project[] = [
   {
     title: "SentinelStack",
     description:
@@ -68,62 +82,102 @@ const projects = [
     github: "https://github.com/x0r909/LinuxDev-Manager",
     accent: "bg-retro-orange",
   },
-] as const;
+];
 
 export function Projects() {
   return (
-    <section id="projects" className="border-y-2 border-border bg-muted/40">
-      <div className="section-container">
-        <div className="mb-10">
-          <Badge className="mb-3 bg-retro-orange text-black">Projects</Badge>
-          <h2 className="font-head text-3xl md:text-5xl">Featured Work</h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">
-            Proyek pilihan dari sistem operasi, platform monitoring, sistem
-            informasi rumah sakit, aplikasi Android, sampai machine learning
-            terapan.
-          </p>
-        </div>
+    <Section id="projects" banded>
+      <SectionHeader
+        eyebrow="Projects"
+        title="Featured Work"
+        description="Proyek pilihan dari sistem operasi, platform monitoring, sistem informasi rumah sakit, aplikasi Android, sampai machine learning terapan."
+        accent={SECTION_ACCENT.projects}
+      />
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <Card key={project.title} className="hover-lift flex h-full flex-col">
+      <OffsetFrame accent="bg-retro-orange" offset="lg" className="mb-10">
+        <Card className="hover-lift shadow-xl">
+          <AccentBar accent={featured.accent} />
+          <div className="md:grid md:grid-cols-[1.2fr_0.8fr] md:gap-6">
+            <div>
               <CardHeader>
-                <div
-                  className={`mb-3 h-3 w-full border-2 border-border ${project.accent}`}
-                />
-                <CardTitle className="font-head text-xl">
-                  {project.title}
+                <CardTitle className="font-head text-2xl md:text-3xl">
+                  {featured.title}
                 </CardTitle>
-                <CardDescription className="text-sm leading-relaxed">
-                  {project.description}
+                <CardDescription className="text-base leading-relaxed">
+                  {featured.description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
-                {project.stack.map((tech) => (
+                {featured.stack.map((tech) => (
                   <Badge key={tech} variant="outline">
                     {tech}
                   </Badge>
                 ))}
               </CardContent>
-              <CardFooter className="mt-auto">
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "no-underline"
-                  )}
-                >
-                  <Code2 data-icon="inline-start" className="size-4" />
-                  GitHub
-                  <ExternalLink data-icon="inline-end" className="size-3.5" />
-                </a>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+            </div>
+
+            <div className="flex flex-col justify-end gap-4 p-4 md:border-l-2 md:border-border">
+              <p className="font-mono text-xs text-muted-foreground">
+                {featured.stack.length} technologies · systems programming
+              </p>
+              <a
+                href={featured.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: "secondary", size: "lg" }),
+                  "no-underline"
+                )}
+              >
+                <Code2 className="size-4" />
+                Lihat di GitHub
+                <ExternalLink className="size-3.5" />
+              </a>
+            </div>
+          </div>
+        </Card>
+      </OffsetFrame>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        {projects.map((project) => (
+          <Card
+            key={project.title}
+            className="hover-lift flex h-full flex-col"
+          >
+            <AccentBar accent={project.accent} />
+            <CardHeader>
+              <CardTitle className="font-head text-lg">
+                {project.title}
+              </CardTitle>
+              <CardDescription className="line-clamp-4 text-sm leading-relaxed">
+                {project.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              {project.stack.map((tech) => (
+                <Badge key={tech} variant="outline">
+                  {tech}
+                </Badge>
+              ))}
+            </CardContent>
+            <CardFooter className="mt-auto">
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "no-underline"
+                )}
+              >
+                <Code2 className="size-4" />
+                GitHub
+                <ExternalLink className="size-3.5" />
+              </a>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }

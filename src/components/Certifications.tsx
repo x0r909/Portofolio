@@ -1,13 +1,16 @@
 import { Download } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { AccentBar } from "@/components/accent-bar";
+import { HighlightCard } from "@/components/highlight-card";
+import { Section } from "@/components/section";
+import { SectionHeader } from "@/components/section-header";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SECTION_ACCENT, type Accent } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
 const certificates = [
@@ -77,60 +80,52 @@ const certificates = [
     file: "e-certificate-2021.pdf",
     accent: "bg-retro-yellow",
   },
-] as const;
+] as const satisfies readonly {
+  name: string;
+  issuer: string;
+  file: string;
+  accent: Accent;
+}[];
 
 export function Certifications() {
   return (
-    <section id="certifications" className="section-container">
-      <div className="mb-10">
-        <Badge className="mb-3 bg-retro-pink text-black">Sertifikasi</Badge>
-        <h2 className="font-head text-3xl md:text-5xl">Sertifikat &amp; CV</h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Sertifikasi profesional dari Cisco, MikroTik, AWS, dan lembaga
-          lainnya. Unduh CV atau sertifikat langsung.
-        </p>
-      </div>
+    <Section id="certifications">
+      <SectionHeader
+        eyebrow="Sertifikasi"
+        title="Sertifikat & CV"
+        description="Sertifikasi profesional dari Cisco, MikroTik, AWS, dan lembaga lainnya. Unduh CV atau sertifikat langsung."
+        accent={SECTION_ACCENT.certifications}
+      />
 
-      <Card className="mb-8 border-2 border-border bg-retro-yellow text-black shadow-md dark:bg-primary">
-        <CardHeader>
-          <CardTitle className="font-head text-xl">
-            Curriculum Vitae
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <HighlightCard title="Curriculum Vitae" className="mb-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-sm">
             CV lengkap Augie Aristito Sudiarto — cybersecurity, full stack
             development, networking, dan pengalaman organisasi.
           </p>
-        </CardContent>
-        <CardFooter>
           <a
             href="/cv/Augie-Aristito-Sudiarto-CV.pdf"
             download
             className={cn(
-              buttonVariants({ size: "sm" }),
-              "no-underline bg-black text-white hover:bg-black/80"
+              buttonVariants({ size: "lg" }),
+              "shrink-0 no-underline"
             )}
           >
             <Download className="size-4" />
             Download CV
           </a>
-        </CardFooter>
-      </Card>
+        </div>
+      </HighlightCard>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {certificates.map((cert) => (
-          <Card key={cert.file} className="hover-lift flex h-full flex-col">
-            <CardHeader className="pb-2">
-              <div
-                className={`mb-2 h-2 w-full border-2 border-border ${cert.accent}`}
-              />
-              <CardTitle className="text-base font-bold">
-                {cert.name}
-              </CardTitle>
+          <Card key={cert.file} size="sm" className="hover-lift flex h-full flex-col">
+            <AccentBar accent={cert.accent} />
+            <CardHeader>
+              <CardTitle className="text-base font-bold">{cert.name}</CardTitle>
               <p className="text-xs text-muted-foreground">{cert.issuer}</p>
             </CardHeader>
-            <CardFooter className="mt-auto pt-2">
+            <CardFooter className="mt-auto">
               <a
                 href={`/certificates/${cert.file}`}
                 download
@@ -146,6 +141,6 @@ export function Certifications() {
           </Card>
         ))}
       </div>
-    </section>
+    </Section>
   );
 }

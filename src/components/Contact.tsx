@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { Code2, Link2, Mail, Send } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Section } from "@/components/section";
+import { SectionHeader } from "@/components/section-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SECTION_ACCENT } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
 const contactLinks = [
@@ -59,15 +61,13 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="section-container">
-      <div className="mb-10">
-        <Badge className="mb-3 bg-retro-pink text-black">Contact</Badge>
-        <h2 className="font-head text-3xl md:text-5xl">Let&apos;s Connect</h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Open to collaboration, internship opportunities, and interesting
-          security / engineering projects.
-        </p>
-      </div>
+    <Section id="contact" banded>
+      <SectionHeader
+        eyebrow="Contact"
+        title="Let&apos;s Connect"
+        description="Open to collaboration, internship opportunities, and interesting security / engineering projects."
+        accent={SECTION_ACCENT.contact}
+      />
 
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-4">
@@ -141,7 +141,7 @@ export function Contact() {
                 />
               </div>
               <Button type="submit" size="lg" className="w-full sm:w-auto">
-                <Send data-icon="inline-start" className="size-4" />
+                <Send className="size-4" />
                 Kirim Pesan
               </Button>
               {status === "sent" && (
@@ -153,6 +153,6 @@ export function Contact() {
           </CardContent>
         </Card>
       </div>
-    </section>
+    </Section>
   );
 }

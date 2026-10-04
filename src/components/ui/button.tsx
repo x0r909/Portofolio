@@ -10,20 +10,20 @@ const buttonVariants = cva(
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-destructive",
     // Icons keep their own size; we only set a default when none is given so
-    // RetroUI's h-4/size-4 icons aren't overridden.
+    // neobrutalism's h-4/size-4 icons aren't overridden.
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
   ),
   {
     variants: {
       variant: {
         default:
-          "border-2 border-black bg-primary text-primary-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-primary-hover hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
+          "border-2 border-border bg-primary text-primary-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
         secondary:
-          "border-2 border-black bg-secondary text-secondary-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-secondary-hover hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
+          "border-2 border-border bg-secondary text-secondary-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-secondary-hover hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
         destructive:
-          "border-2 border-black bg-destructive text-destructive-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-destructive/90 hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
+          "border-2 border-border bg-destructive text-destructive-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-destructive/90 hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
         outline:
-          "border-2 bg-transparent shadow-md transition duration-200 hover:translate-y-1 hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
+          "border-2 border-border bg-transparent shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
         ghost: "bg-transparent hover:bg-accent",
         link: "bg-transparent hover:underline",
       },

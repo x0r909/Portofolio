@@ -19,7 +19,7 @@
   },
   "iconLibrary": "lucide",
   "registries": {
-    "@retroui": "https://retroui.dev/r/radix/{name}.json",
-    "@retroui-base": "https://retroui.dev/r/base/{name}.json"
+    "@neobrutalism": "https://neobrutalism.com/r/radix/{name}.json",
+    "@neobrutalism-base": "https://neobrutalism.com/r/base/{name}.json"
   }
 }
