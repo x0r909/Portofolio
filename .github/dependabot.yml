@@ -1,0 +1,38 @@
+version: 2
+updates:
+  # npm — weekly, grouped so one PR carries the patch/minor bumps that the
+  # audit gate would otherwise drip out one advisory at a time.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      patch-and-minor:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "deps"
+
+  # Docker base images. The Dockerfile pins tag + digest, so a bump has to
+  # move both — this is what keeps the pinned digest from going stale.
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "deps"
+      include: scope
+
+  # Actions are SHA-pinned. Dependabot understands that pinning style and
+  # rewrites the SHA while leaving the version comment intact.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "ci"
