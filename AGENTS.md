@@ -50,7 +50,7 @@ Email / GitHub / LinkedIn appear in four places: `Contact.tsx` (`contactLinks`),
 ## Build / Deploy
 
 - CI (`.github/workflows/ci.yml`): `quality` job (`npm ci --ignore-scripts` → prod-dependency audit → lint → `tsc --noEmit` → `next build` → uploads `out/` artifact) runs on every branch push, PRs, and `v*` tags; `docker` job (CD) pushes `ghcr.io/x0r909/portofolio` on `main` (→ `latest`) and `staging` (→ `staging`), then scans the pushed digest with Trivy, writes an SPDX SBOM, signs with keyless cosign, and attests provenance. All actions are SHA-pinned — keep the version comment when bumping; `.github/dependabot.yml` handles the bumps
-- Security: `codeql.yml` (CodeQL `security-extended`, `main`/`staging` + PRs + weekly); `security.yml` (Dependency Review on PRs, gitleaks full-history secret scan, Trivy fs scan → SARIF, weekly)
+- Security: `codeql.yml` (CodeQL `security-extended`, `main`/`staging` + PRs + weekly); `security.yml` (Dependency Review on PRs, gitleaks secret scan (pushed range per push, full history on the weekly cron), Trivy fs scan → SARIF, weekly)
 - Dockerfile: node:24-alpine builds → nginx:1.31-alpine serves `out/` on :3000 with `nginx.conf` (gzip, security headers, 30d asset cache, SPA fallback). Both base images are pinned tag + digest; the nginx stage runs `apk upgrade --no-cache` (the published tag lags Alpine advisories) and as the unprivileged `nginx` user — preserve both on edit
 - `docker-compose.yml`: pulls `ghcr.io/x0r909/portfolio-augie:latest`, maps `${APP_PORT:-3000}:3000`. That image name does not exist — CI publishes `ghcr.io/x0r909/portofolio`
 - `setup-prod.sh` is broken: it references `ecosystem.config.js` (PM2), which does not exist in the repo — prefer the Docker path

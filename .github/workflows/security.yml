@@ -48,7 +48,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Full history: a secret removed in a later commit is still leaked.
+          # Needed for the full-history runs below; the action passes no
+          # `--log-opts` on schedule/dispatch, so gitleaks walks every commit.
+          # On `push` it scans only the pushed range (a single commit gets
+          # `--log-opts=-1`), which is why the cron exists to catch a secret
+          # that was removed in a later commit but is still in the history.
           fetch-depth: 0
           persist-credentials: false
 

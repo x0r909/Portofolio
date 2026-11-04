@@ -45,7 +45,7 @@ Security scanning runs alongside it:
 
 - **CodeQL** (`.github/workflows/codeql.yml`) — static analysis of the JavaScript/TypeScript source, on `main`/`staging`, PRs, and a weekly schedule
 - **Dependency Review** (`.github/workflows/security.yml`) — blocks PRs that introduce high-severity vulnerable dependencies
-- **gitleaks** — full-history secret scan; a secret removed in a later commit is still leaked
+- **gitleaks** — incremental secret scan on each push (the range that was just pushed) and a full-history scan on the weekly schedule, where a secret removed in a later commit is still caught
 - **Trivy** — scans dependencies, config, and secrets for HIGH/CRITICAL findings, and separately scans the *built image* by digest. All results upload as SARIF to the Security tab
 
 Every action is pinned to a commit SHA, each job declares only the `permissions:` it needs, and `.github/dependabot.yml` keeps the pins, the base-image digests, and npm current on a weekly cadence.
