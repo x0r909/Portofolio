@@ -78,6 +78,7 @@ jobs:
       packages: write
       id-token: write # cosign keyless signing
       attestations: write # build provenance
+      security-events: write # upload-sarif for the image scan
 
     env:
       # Deliberately github.repository (→ ghcr.io/x0r909/portofolio), which is
