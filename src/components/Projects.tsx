@@ -1,183 +1,190 @@
-import { Code2, ExternalLink } from "lucide-react";
-import { AccentBar } from "@/components/accent-bar";
-import { OffsetFrame } from "@/components/offset-frame";
 import { Section } from "@/components/section";
 import { SectionHeader } from "@/components/section-header";
+import { OffsetFrame } from "@/components/offset-frame";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
+  CardChrome,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SECTION_ACCENT, type Accent } from "@/lib/accents";
+import { REPOS, type Repo } from "@/lib/projects.generated";
+import { SECTION_ACCENT } from "@/lib/accents";
 import { cn } from "@/lib/utils";
 
-type Project = {
-  title: string;
-  description: string;
-  stack: readonly string[];
-  github: string;
-  accent: Accent;
+/**
+ * Projects — window cards, per DESIGN.md §9 and §8.
+ *
+ * The list is GitHub, not a hand-kept array: `src/lib/projects.generated.ts` is
+ * a snapshot written by `npm run sync:projects`, and this component only
+ * formats it. Adding a repository to the account is enough to get a card here
+ * after the next sync — nothing needs editing in JSX.
+ *
+ * Three fields are derived, never invented:
+ *
+ *   status  — from `archived` and `pushedAt`
+ *   meta    — the push date, exactly as GitHub reports it
+ *   stack   — GitHub's `topics`, falling back to its primary `language`
+ *
+ * A repository with no description shows the push line only. There is no
+ * placeholder prose: an empty description is a fact about the repo, so it is
+ * rendered as absence rather than filled in.
+ */
+
+type Status = "ONLINE" | "DORMANT" | "ARCHIVED";
+
+const STATUS_VARIANT: Record<Status, "default" | "warn" | "dim" | "cyan"> = {
+  ONLINE: "default",
+  DORMANT: "warn",
+  ARCHIVED: "dim",
 };
 
-const featured: Project = {
-  title: "AetherOS",
-  description:
-    "Sistem operasi hobi untuk arsitektur x86_64 yang dibangun dari nol dengan C dan Assembly. Booting via UEFI, console serial + framebuffer, dan self-test bawaan.",
-  stack: ["C", "Assembly", "UEFI", "x86_64"],
-  github: "https://github.com/x0r909/AetherOS",
-  accent: "bg-retro-orange",
-};
+/** Six months without a push reads as dormant rather than active. */
+const DORMANT_MS = 1000 * 60 * 60 * 24 * 182;
 
-const projects: readonly Project[] = [
-  {
-    title: "SentinelStack",
-    description:
-      "Stack monitoring all-in-one untuk Proxmox, Docker, dan Linux. Observability lengkap: metrik, log, tracing, dan uptime dalam satu deployment.",
-    stack: ["Go", "Shell", "Grafana", "Prometheus", "Loki", "Docker"],
-    github: "https://github.com/x0r909/SentinelStack",
-    accent: "bg-retro-green",
-  },
-  {
-    title: "SIMRS",
-    description:
-      "Sistem Informasi Manajemen Rumah Sakit. Monorepo Next.js App Router + NestJS + Prisma + PostgreSQL + Redis + MinIO, RBAC multi-persona, audit logging, PWA.",
-    stack: ["Next.js", "NestJS", "Prisma", "PostgreSQL", "Redis", "MinIO"],
-    github: "https://github.com/x0r909/SIMRS",
-    accent: "bg-retro-yellow",
-  },
-  {
-    title: "StudySync",
-    description:
-      "Aplikasi kolaboratif Kanban task management untuk mahasiswa (Android, Kotlin/Jetpack Compose) dengan Firebase Auth, Firestore, FCM, dan Storage.",
-    stack: ["Kotlin", "Jetpack Compose", "Firebase", "FCM"],
-    github: "https://github.com/x0r909/StudySync",
-    accent: "bg-retro-blue",
-  },
-  {
-    title: "SIM KP HIMATRIS",
-    description:
-      "Sistem manajemen organisasi HIMATRIS untuk alur kerja dan administrasi kepengurusan. Laravel 12 + React 19 + Inertia, full TypeScript.",
-    stack: ["Laravel 12", "React 19", "Inertia", "TypeScript"],
-    github: "https://github.com/x0r909/sim-kp-himatris",
-    accent: "bg-retro-pink",
-  },
-  {
-    title: "Agar-Plate Preprocessing",
-    description:
-      "Pipeline preprocessing citra cawan petri dengan FastAPI dan OpenCV. Auto-tuned Circular Hough Transform + CLAHE untuk segmentasi koloni yang konsisten.",
-    stack: ["Python", "FastAPI", "OpenCV", "NumPy"],
-    github: "https://github.com/x0r909/Agar-Plate-Preprocessing",
-    accent: "bg-retro-lavender",
-  },
-  {
-    title: "LinuxDev-Manager",
-    description:
-      "Manajer environment pengembangan web ala Laragon namun untuk Linux. Mengatur service, virtual host, dan runtime dari satu antarmuka desktop.",
-    stack: ["Python", "PyQt5", "Linux", "DevTools"],
-    github: "https://github.com/x0r909/LinuxDev-Manager",
-    accent: "bg-retro-orange",
-  },
-];
+function statusOf(repo: Repo): Status {
+  if (repo.archived) return "ARCHIVED";
+  const age = Date.now() - Date.parse(repo.pushedAt);
+  return age > DORMANT_MS ? "DORMANT" : "ONLINE";
+}
+
+function stackOf(repo: Repo): readonly string[] {
+  if (repo.topics.length > 0) return repo.topics;
+  return repo.language ? [repo.language] : [];
+}
+
+/** `2026-10-31T09:10:03Z` → `2026-10-31`, without a timezone round-trip. */
+const pushedOn = (repo: Repo) => repo.pushedAt.slice(0, 10);
+
+function RepoLink({ repo }: { repo: Repo }) {
+  return (
+    <a
+      href={repo.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="border border-border px-2 py-1 font-mono text-2xs text-muted-foreground no-underline transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:shadow-[0_0_12px_var(--accent-glow)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-2)]"
+    >
+      [repo]
+    </a>
+  );
+}
 
 export function Projects() {
+  // The snapshot is sorted newest-first by the sync script; the first entry is
+  // the most recently pushed repository.
+  const [featured, ...rest] = REPOS;
+
   return (
     <Section id="projects" banded>
       <SectionHeader
         eyebrow="Projects"
         title="Featured Work"
-        description="Proyek pilihan dari sistem operasi, platform monitoring, sistem informasi rumah sakit, aplikasi Android, sampai machine learning terapan."
+        description="Repositori publik terbaru, ditarik langsung dari GitHub. Urut sesuai push terakhir."
         accent={SECTION_ACCENT.projects}
+        command="gh repo list x0r909"
       />
 
-      <OffsetFrame accent="bg-retro-orange" offset="lg" className="mb-10">
-        <Card className="hover-lift shadow-xl">
-          <AccentBar accent={featured.accent} />
-          <div className="md:grid md:grid-cols-[1.2fr_0.8fr] md:gap-6">
-            <div>
-              <CardHeader>
-                <CardTitle className="font-head text-2xl md:text-3xl">
-                  {featured.title}
-                </CardTitle>
-                <CardDescription className="text-base leading-relaxed">
-                  {featured.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {featured.stack.map((tech) => (
-                  <Badge key={tech} variant="outline">
-                    {tech}
+      {featured ? (
+        <OffsetFrame accent="warn" offset="lg" className="mb-10">
+          <Card className="hover-glow glitch-hover flex flex-col">
+            <CardChrome label={`~/projects/${featured.name}`} />
+            <div className="md:grid md:grid-cols-[1.2fr_0.8fr] md:gap-6">
+              <div>
+                <CardHeader className="flex-row items-center justify-between gap-3">
+                  <CardTitle className="font-display text-2xl md:text-3xl">
+                    {featured.name}
+                  </CardTitle>
+                  <Badge bracket variant={STATUS_VARIANT[statusOf(featured)]}>
+                    {statusOf(featured)}
                   </Badge>
-                ))}
-              </CardContent>
-            </div>
+                </CardHeader>
+                {featured.description ? (
+                  <CardDescription className="px-4 pb-4 text-sm leading-relaxed">
+                    {featured.description}
+                  </CardDescription>
+                ) : null}
+                <CardContent className="flex flex-wrap gap-1.5">
+                  {stackOf(featured).map((tech) => (
+                    <Badge key={tech} variant="outline">
+                      {tech}
+                    </Badge>
+                  ))}
+                </CardContent>
+              </div>
 
-            <div className="flex flex-col justify-end gap-4 p-4 md:border-l-2 md:border-border">
-              <p className="font-mono text-xs text-muted-foreground">
-                {featured.stack.length} technologies · systems programming
-              </p>
-              <a
-                href={featured.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ variant: "secondary", size: "lg" }),
-                  "no-underline"
-                )}
-              >
-                <Code2 className="size-4" />
-                Lihat di GitHub
-                <ExternalLink className="size-3.5" />
-              </a>
+              <div className="flex flex-col justify-end gap-3 border-t border-dashed border-border p-4 md:border-t-0 md:border-l">
+                <p className="font-mono text-2xs text-muted-foreground">
+                  {statusOf(featured) === "ARCHIVED" ? "archived" : "pushed"}{" "}
+                  {pushedOn(featured)} · {featured.stars} ★ · {featured.forks}{" "}
+                  {featured.forks === 1 ? "fork" : "forks"}
+                </p>
+                <RepoLink repo={featured} />
+              </div>
             </div>
-          </div>
-        </Card>
-      </OffsetFrame>
+          </Card>
+        </OffsetFrame>
+      ) : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
-        {projects.map((project) => (
+        {rest.map((repo) => (
           <Card
-            key={project.title}
-            className="hover-lift flex h-full flex-col"
+            key={repo.name}
+            className="hover-glow glitch-hover flex h-full flex-col"
           >
-            <AccentBar accent={project.accent} />
-            <CardHeader>
-              <CardTitle className="font-head text-lg">
-                {project.title}
+            <CardChrome label={repo.name} />
+            <CardHeader className="flex-row items-start justify-between gap-3">
+              <CardTitle className="font-display text-lg leading-tight">
+                {repo.name}
               </CardTitle>
-              <CardDescription className="line-clamp-4 text-sm leading-relaxed">
-                {project.description}
-              </CardDescription>
+              <Badge bracket variant={STATUS_VARIANT[statusOf(repo)]}>
+                {statusOf(repo)}
+              </Badge>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              {project.stack.map((tech) => (
+            {repo.description ? (
+              <CardDescription className="line-clamp-4 px-4 text-xs leading-relaxed">
+                {repo.description}
+              </CardDescription>
+            ) : (
+              <CardDescription className="px-4 text-xs italic">
+                tanpa deskripsi
+              </CardDescription>
+            )}
+            <CardContent className="flex flex-wrap gap-1.5">
+              {stackOf(repo).map((tech) => (
                 <Badge key={tech} variant="outline">
                   {tech}
                 </Badge>
               ))}
             </CardContent>
-            <CardFooter className="mt-auto">
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "sm" }),
-                  "no-underline"
-                )}
-              >
-                <Code2 className="size-4" />
-                GitHub
-                <ExternalLink className="size-3.5" />
-              </a>
+            <CardFooter className="mt-auto justify-between gap-3">
+              <span className="font-mono text-2xs text-muted-foreground">
+                {pushedOn(repo)}
+              </span>
+              <RepoLink repo={repo} />
             </CardFooter>
           </Card>
         ))}
       </div>
+
+      <p className="mt-8 font-mono text-xs text-muted-foreground">
+        <span className="text-[var(--accent)]" aria-hidden="true">
+          $
+        </span>{" "}
+        lihat semua repositori di{" "}
+        <a
+          href="https://github.com/x0r909"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "text-[var(--accent)] underline decoration-dotted underline-offset-4 hover:decoration-solid"
+          )}
+        >
+          github.com/x0r909
+        </a>
+      </p>
     </Section>
   );
 }

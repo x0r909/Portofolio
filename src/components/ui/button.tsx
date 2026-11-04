@@ -4,38 +4,49 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Terminal buttons.
+ *
+ * The default variant is the spec's `[ contact_me ]` form: transparent with an
+ * accent border, filling solid accent on hover. The brackets are written into
+ * the label by each caller rather than drawn here, so the visible text and the
+ * accessible name stay identical.
+ *
+ * No shadows and no lift: this system's elevation language is glow, and the
+ * only motion on a control is the phosphor brightening.
+ */
 const buttonVariants = cva(
   cn(
-    "group/button font-head font-medium inline-flex cursor-pointer items-center justify-center gap-2 rounded whitespace-nowrap select-none transition-all duration-200",
-    "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60",
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-destructive",
-    // Icons keep their own size; we only set a default when none is given so
-    // neobrutalism's h-4/size-4 icons aren't overridden.
+    "group/button relative inline-flex cursor-pointer items-center justify-center gap-2 rounded-none whitespace-nowrap font-mono select-none",
+    "transition-[color,background-color,border-color,box-shadow] duration-150",
+    "disabled:pointer-events-none disabled:opacity-40",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-2)]",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
   ),
   {
     variants: {
       variant: {
         default:
-          "border-2 border-border bg-primary text-primary-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
+          "border border-[var(--accent)] bg-transparent text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--bg)] hover:shadow-[0_0_14px_var(--accent-glow)]",
         secondary:
-          "border-2 border-border bg-secondary text-secondary-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-secondary-hover hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
+          "border border-border bg-[var(--bg-elev)] text-foreground hover:border-[var(--accent)] hover:text-[var(--accent)]",
         destructive:
-          "border-2 border-border bg-destructive text-destructive-foreground shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-destructive/90 hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
+          "border border-destructive bg-transparent text-destructive hover:bg-destructive hover:text-[var(--bg)]",
         outline:
-          "border-2 border-border bg-transparent shadow-md transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-sm",
-        ghost: "bg-transparent hover:bg-accent",
-        link: "bg-transparent hover:underline",
+          "border border-border bg-transparent text-muted-foreground hover:border-[var(--accent-2)] hover:text-[var(--accent-2)]",
+        ghost:
+          "border border-transparent bg-transparent text-muted-foreground hover:border-border hover:text-foreground",
+        link: "border-0 bg-transparent text-[var(--accent)] underline decoration-dotted underline-offset-4 hover:decoration-solid",
       },
       size: {
-        default: "px-4 py-1.5 text-base",
-        xs: "px-2 py-0.5 text-xs",
-        sm: "px-3 py-1 text-sm",
-        lg: "px-6 py-2 text-base lg:px-8 lg:py-3 lg:text-lg",
-        icon: "p-2",
-        "icon-xs": "p-1",
-        "icon-sm": "p-1.5",
-        "icon-lg": "p-3",
+        default: "px-3 py-1.5 text-sm",
+        xs: "px-2 py-0.5 text-2xs",
+        sm: "px-2.5 py-1 text-xs",
+        lg: "px-4 py-2 text-sm md:px-5 md:py-2.5 md:text-base",
+        icon: "size-9 p-0",
+        "icon-xs": "size-6 p-0",
+        "icon-sm": "size-8 p-0",
+        "icon-lg": "size-11 p-0",
       },
     },
     defaultVariants: {

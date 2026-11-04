@@ -1,20 +1,100 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* ==========================================================================
+   x0r909 portfolio — retro cyber terminal
+   Single source of truth for the design system. See DESIGN.md for the brief
+   this implements; the shell is `#0a0e0a`, the phosphor is `#39ff14`.
+
+   Theme is NOT light/dark. Three phosphor variants swap `--accent` and its
+   glow via `[data-theme]` on <html>: green (default), amber, blue. Everything
+   else stays put, so a theme is a two-token change.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- raw palette ------------------------------------------------------ */
+  --bg: #0a0e0a;
+  --bg-elev: #101710;
+  --border: #1f3a1f;
+  --fg: #c8f7c8;
+  --fg-dim: #6b8f6b;
+  --accent: #39ff14;
+  --accent-2: #00e5ff;
+  --warn: #ffb000;
+  --danger: #ff3b5c;
+  --selection: #39ff1433;
+
+  /* Glow is derived from the accent so a theme swap drags it along. */
+  --accent-glow: #39ff1440;
+  --accent-glow-soft: #39ff141f;
+
+  /* --- shadcn token bridge --------------------------------------------- */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg-elev);
+  --card-foreground: var(--fg);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--bg);
+  --primary-hover: #5cff3d;
+  --secondary: transparent;
+  --secondary-foreground: var(--fg);
+  --muted: #121a12;
+  --muted-foreground: var(--fg-dim);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--bg);
+  --input: transparent;
+  --ring: var(--accent-2);
+
+  /* Hard corners everywhere; 2px is reserved for tiny status marks. */
+  --radius: 0;
+
+  /* Shadow scale is a GLOW scale — there are no drop shadows in this system.
+     Named `--glow-*` rather than `--shadow-*` because `@theme inline` binds
+     `--shadow-*` to these and a token cannot reference itself. */
+  --glow-2xs: 0 0 0 1px var(--border);
+  --glow-xs: 0 0 0 1px var(--border);
+  --glow-sm: 0 0 0 1px var(--border), 0 0 4px var(--accent-glow-soft);
+  --glow-md: 0 0 0 1px var(--accent), 0 0 12px var(--accent-glow);
+  --glow-lg: 0 0 0 1px var(--accent), 0 0 20px var(--accent-glow);
+  --glow-xl: 0 0 0 1px var(--accent), 0 0 32px var(--accent-glow);
+  --glow-2xl: 0 0 0 1px var(--accent), 0 0 48px var(--accent-glow);
+}
+
+/* --- phosphor variants ---------------------------------------------------
+   Only the accent family moves. `--accent-2` stays cyan in every theme: it is
+   the focus/highlight color, and letting it drift would make two accents
+   compete for the same job. */
+:root[data-theme="amber"] {
+  --accent: #ffb000;
+  --accent-glow: #ffb00040;
+  --accent-glow-soft: #ffb0001f;
+  --primary-hover: #ffc233;
+}
+
+:root[data-theme="blue"] {
+  --accent: #00e5ff;
+  --accent-glow: #00e5ff40;
+  --accent-glow-soft: #00e5ff1f;
+  --primary-hover: #3dedff;
+}
 
 @theme inline {
-  --font-head: var(--font-head);
-  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-mono);
+  --font-mono: var(--font-mono);
   --radius: var(--radius);
 
-  --shadow-xs: 1px 1px 0 0 var(--shadow-color);
-  --shadow-sm: 2px 2px 0 0 var(--shadow-color);
-  --shadow: 3px 3px 0 0 var(--shadow-color);
-  --shadow-md: 4px 4px 0 0 var(--shadow-color);
-  --shadow-lg: 6px 6px 0 0 var(--shadow-color);
-  --shadow-xl: 10px 10px 0 1px var(--shadow-color);
-  --shadow-2xl: 16px 16px 0 1px var(--shadow-color);
+  --shadow-2xs: var(--glow-2xs);
+  --shadow-xs: var(--glow-xs);
+  --shadow-sm: var(--glow-sm);
+  --shadow-md: var(--glow-md);
+  --shadow-lg: var(--glow-lg);
+  --shadow-xl: var(--glow-xl);
+  --shadow-2xl: var(--glow-2xl);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -27,78 +107,22 @@
   --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary-hover: var(--secondary-hover);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent-2);
+  --color-accent-foreground: var(--bg);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-retro-yellow: #ffdc58;
-  --color-retro-orange: #ff8a3d;
-  --color-retro-blue: #7dd3fc;
-  --color-retro-pink: #fda4af;
-  --color-retro-green: #86efac;
-  --color-retro-lavender: #c4b5fd;
-}
+  --color-phosphor: var(--accent);
+  --color-phosphor-dim: var(--fg-dim);
+  --color-cyan: var(--accent-2);
+  --color-warn: var(--warn);
 
-:root {
-  --radius: 0;
-  --background: #fff7e8;
-  --foreground: #1a1815;
-  --card: #fff;
-  --card-foreground: #1a1815;
-  --popover: #fff;
-  --popover-foreground: #1a1815;
-  --primary: #ffdc58;
-  --primary-hover: #ffc700;
-  --primary-foreground: #000;
-  --secondary: #1a1815;
-  --secondary-hover: #33302a;
-  --secondary-foreground: #fff7e8;
-  --muted: #f5eedd;
-  --muted-foreground: #6b6459;
-  --accent: #ffe7a3;
-  --accent-foreground: #1a1815;
-  --destructive: #e63946;
-  --destructive-foreground: #fff;
-  --border: #000;
-  --input: #fff;
-  /* Deliberately not upstream's yellow: a yellow focus ring on the cream
-     ground is ~1.4:1. Dark keeps the yellow (see .dark). */
-  --ring: #1a1815;
-  --shadow-color: #000000;
-}
-
-.dark {
-  --background: #1a1815;
-  --foreground: #f5f0e6;
-  --card: #262320;
-  --card-foreground: #f5f0e6;
-  --popover: #262320;
-  --popover-foreground: #f5f0e6;
-  --primary: #ffdc58;
-  --primary-hover: #ffc700;
-  --primary-foreground: #000;
-  --secondary: #f5f0e6;
-  --secondary-hover: #ddd6c6;
-  --secondary-foreground: #1a1815;
-  --muted: #38342b;
-  --muted-foreground: #a89f8f;
-  --accent: #38342b;
-  --accent-foreground: #f5f0e6;
-  --destructive: #ff6b6b;
-  --destructive-foreground: #1a1815;
-  --border: #000;
-  --input: #262320;
-  --ring: #ffdc58;
-  /* Charcoal, not black — a black offset on the near-black ground reads as no
-     shadow at all. This is the whole reason shadow-color is separate. */
-  --shadow-color: #4a443c;
+  --text-2xs: 0.6875rem;
 }
 
 @layer base {
@@ -108,10 +132,19 @@
 
   html {
     scroll-behavior: smooth;
+    /* The terminal aesthetic is monospace-first; nothing else is mixed in. */
+    font-family: var(--font-mono), ui-monospace, monospace;
+    background: var(--bg);
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    /* Slight phosphor bloom on body copy. Kept tiny: a glow on every glyph
+       turns dense prose into mush. Larger glow is reserved for headings. */
+    text-shadow: 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
   h1,
@@ -120,7 +153,15 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-head), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-display), var(--font-mono), monospace;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--fg);
   }
 
   button:not(:disabled),
@@ -128,57 +169,440 @@
     cursor: pointer;
   }
 
+  /* The text-insertion caret is a cursor too, and it must be the same phosphor
+     everywhere. It was set only on the terminal input, so the contact form's
+     native white caret disagreed with it. Set once here so every text-entry
+     surface — including any added later — inherits it. */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    caret-color: var(--accent);
+  }
+
+  /* Focus is a phosphor ring, never removed. */
+  :focus-visible {
+    outline: 2px solid var(--accent-2);
+    outline-offset: 2px;
+  }
+
   ::-webkit-scrollbar {
     width: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--muted);
-    border-left: 2px solid var(--border);
+    background: var(--bg);
+    border-left: 1px solid var(--border);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border: 2px solid var(--border);
+    background: var(--border);
+    border: 1px solid var(--accent);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
   }
 }
 
 @layer utilities {
-  .font-head,
-  /* Upstream neobrutalism components reference `cn-font-heading`; alias it so a
-     registry pull doesn't silently fall back to the body font. */
-  .cn-font-heading {
-    font-family: var(--font-head), ui-sans-serif, system-ui, sans-serif;
-  }
-
-  .font-body {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  .font-display {
+    font-family: var(--font-display), var(--font-mono), monospace;
+    font-weight: 400;
   }
 
   .section-container {
-    @apply mx-auto max-w-6xl px-4 py-16 md:px-8 md:py-24;
+    @apply mx-auto max-w-5xl px-4 py-16 md:px-8 md:py-24;
   }
 
-  .retro-pattern {
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.06) 1px, transparent 0);
-    background-size: 24px 24px;
+  /* Phosphor bloom for text that should read as emitted light. */
+  .phosphor {
+    color: var(--accent);
+    text-shadow: 0 0 6px var(--accent-glow);
   }
 
-  .dark .retro-pattern {
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(245, 240, 230, 0.06) 1px, transparent 0);
-  }
-
-  .hover-lift {
+  /* One interaction language: border traces to accent, glow lifts. */
+  .hover-glow {
     @apply transition-all duration-200;
   }
 
-  .hover-lift:hover {
-    @apply -translate-x-0.5 -translate-y-0.5 shadow-lg;
+  .hover-glow:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 16px var(--accent-glow);
   }
 
-  .hover-lift:active {
-    @apply translate-x-0.5 translate-y-0.5 shadow-sm;
+  .hover-glow:active {
+    box-shadow: 0 0 0 1px var(--accent), 0 0 6px var(--accent-glow);
+  }
+
+  /* Chromatic split on heading hover — the only RGB-split on the site. */
+  .chroma-hover:hover {
+    text-shadow:
+      -1px 0 var(--danger),
+      1px 0 var(--accent-2);
+  }
+
+  /* Dotted rule used between terminal blocks. */
+  .rule-dotted {
+    border-top: 1px dashed var(--border);
+  }
+}
+
+/* ==========================================================================
+   CRT overlay
+   Scanlines, vignette and noise are one fixed, pointer-events:none stack above
+   the page. They must never intercept input, so nothing here takes events.
+   ========================================================================== */
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Scanlines. 2px transparent / 1px dark, at very low alpha so body text stays
+   crisp — the effect should read as a screen, not as a texture over words. */
+.crt-scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgb(0 0 0 / 0) 0 2px,
+    rgb(0 0 0 / 0.15) 2px 3px
+  );
+}
+
+/* Vignette: pulls the corners dark like a curved CRT face. */
+.crt-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 58%,
+    rgb(0 0 0 / 0.55) 100%
+  );
+}
+
+/* Noise floor. Static data URI so it costs no request. */
+.crt-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Flicker. Deliberately shallow (0.97→1) and slow (7s): the eye should never
+   catch it as a pulse, only as the screen being alive. */
+.crt-flicker {
+  animation: crt-flicker 7s steps(1, end) infinite;
+}
+
+@keyframes crt-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.97;
+  }
+  95% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.98;
+  }
+}
+
+/* ==========================================================================
+   Boot screen
+   Pre-paint gated: `<html data-boot="on">` is set by the inline script in
+   layout.tsx only when motion is welcome and this session has not booted
+   already. No attribute means no overlay at all, so no-JS is a clean page.
+   ========================================================================== */
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  background: var(--bg);
+  padding: 2rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+}
+
+html[data-boot="on"] .boot-screen {
+  display: block;
+}
+
+html[data-boot="leaving"] .boot-screen {
+  animation: boot-out 320ms steps(5, end) forwards;
+}
+
+@keyframes boot-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Gated on `[data-boot="on"]` so the stagger starts at the moment the screen
+   is actually allowed to appear, not at mount. Ungated it would be several
+   hundred ms into its run by the time the attribute lands. */
+html[data-boot="on"] .boot-line {
+  opacity: 0;
+  animation: boot-line 60ms steps(1, end) forwards;
+}
+
+.boot-line--ok {
+  color: var(--accent);
+}
+
+@keyframes boot-line {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Motion
+   Everything below is UNLAYERED on purpose. Tailwind v4 emits
+   `@layer theme, base, components, utilities`; a rule inside a layer loses to
+   utility classes on the real elements. Unlayered rules beat every layer
+   regardless of specificity — no `!important`, no specificity arms race.
+   ========================================================================== */
+
+/* --- the live page build ------------------------------------------------ */
+/* `queued` holds, `building` animates, `done` matches nothing. Because `done`
+   matches no rule, a finished element falls back to its own classes — that is
+   what keeps `hover-glow` working afterwards. The build animation uses
+   `fill-mode: backwards`, so it holds nothing once it ends. Do not switch it
+   to `both`: a held end-state would outrank `:hover` forever. */
+
+html[data-build="on"] [data-build-state="queued"] {
+  opacity: 0;
+}
+
+html[data-build="on"] [data-build-state="building"] {
+  animation: build-in 300ms steps(6, end) var(--build-delay, 0ms) backwards;
+}
+
+/* steps(), not a curve: the reveal should land in visible increments like a
+   terminal painting a line, not glide in. */
+@keyframes build-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* --- typed text ---------------------------------------------------------- */
+/* The caret is a bar painted at the right edge of a 100%-wide ::after that
+   travels from -100% to 0, so it lands exactly on the text's trailing edge
+   with no measurement.
+
+   Compound, not descendant: the `.build-type` element IS the `[data-build]`
+   element, so a descendant selector would look for a `.build-type` inside
+   itself and never match. */
+.build-type {
+  position: relative;
+  display: inline-block;
+}
+
+html[data-build="on"] [data-build-state="building"].build-type::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent calc(100% - 0.55em),
+    var(--accent) calc(100% - 0.55em)
+  );
+  transform: translateX(-100%);
+  /* Must finish before `build-in` (300ms) settles the element to `done`,
+     because that is the instant this gate closes. */
+  animation: build-caret 300ms steps(10, end) both;
+}
+
+@keyframes build-caret {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* --- the ⌥-drag duplicate ----------------------------------------------- */
+/* Legitimately a descendant selector: the plate is a child of the animated
+   element. */
+[data-build-state="building"] [data-build-duplicate] {
+  animation: build-duplicate 380ms steps(5, end) both;
+}
+
+@keyframes build-duplicate {
+  from {
+    translate: -8px -8px;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+/* --- hero typewriter -----------------------------------------------------
+   The text is present in the DOM at full width and revealed by a clip that
+   sweeps left to right, so it needs no per-character JS, stays selectable,
+   and is complete for screen readers and find-in-page. */
+.typewriter {
+  --type-chars: 24;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 0.55em solid var(--accent);
+  width: 0;
+  animation:
+    type-sweep 40ms steps(1, end) calc(var(--type-chars) * 40ms) forwards,
+    caret-blink 900ms steps(1, end) 8;
+}
+
+@keyframes type-sweep {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* width in `ch` is the honest unit here — the text is monospace by design. */
+.typewriter--on {
+  animation:
+    type-reveal calc(var(--type-chars) * 40ms) steps(var(--type-chars), end)
+      forwards,
+    caret-blink 900ms steps(1, end) infinite;
+}
+
+@keyframes type-reveal {
+  from {
+    width: 0;
+  }
+  to {
+    width: calc(var(--type-chars) * 1ch);
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    border-color: var(--accent);
+  }
+  50%,
+  100% {
+    border-color: transparent;
+  }
+}
+
+/* --- skill bars ---------------------------------------------------------- */
+/* --- project card glitch -------------------------------------------------
+   One frame of offset color on hover. `1` is a single step, so it is a true
+   one-frame glitch rather than a wobble. */
+.glitch-hover:hover {
+  animation: glitch 150ms steps(2, end);
+}
+
+@keyframes glitch {
+  0% {
+    translate: -1px 0;
+  }
+  50% {
+    translate: 1px 0;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* --- nav prefix ---------------------------------------------------------- */
+.nav-link::before {
+  content: ">";
+  display: inline-block;
+  width: 0;
+  opacity: 0;
+  transition:
+    width 120ms steps(2, end),
+    opacity 120ms steps(2, end);
+}
+
+.nav-link:hover::before,
+.nav-link:focus-visible::before {
+  width: 1ch;
+  opacity: 1;
+}
+
+/* --- matrix easter egg --------------------------------------------------- */
+.matrix-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  opacity: 0.5;
+  animation: matrix-fade 3s linear forwards;
+}
+
+@keyframes matrix-fade {
+  0%,
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion: every effect off, nothing hidden, page fully readable.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .crt-flicker,
+  .matrix-rain,
+  .boot-screen {
+    display: none !important;
+  }
+
+  [data-build-state] {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+
+  .typewriter,
+  .typewriter--on {
+    width: auto !important;
+    border-right: 0 !important;
   }
 }

@@ -1,21 +1,28 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Archivo_Black, Space_Grotesk } from "next/font/google";
+import { JetBrains_Mono, VT323 } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { BuildLive } from "@/components/build-live";
+import { CrtOverlay } from "@/components/crt-overlay";
+import { BootScreen } from "@/components/boot-screen";
+import { MatrixRain } from "@/components/matrix-rain";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
-const archivoBlack = Archivo_Black({
+/* Display face for headings only — VT323 is a single-weight pixel-adjacent
+   terminal face and falls apart below ~24px, so it never touches body copy. */
+const vt323 = VT323({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-head",
+  variable: "--font-display",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+/* Body and code. Everything on the page is monospace by design. */
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -23,7 +30,7 @@ const SITE_URL = "https://augie.my.id";
 
 const SITE_TITLE = "Augie Aristito Sudiarto | Cyber Security Portfolio";
 const SITE_DESCRIPTION =
-  "Portfolio of Augie Aristito Sudiarto — Cybersecurity Engineering student, Full Stack Developer, Network Engineer, and AI/ML Enthusiast. Secure software, networking, and applied AI.";
+  "Portfolio of Augie Aristito Sudiarto — Cybersecurity Engineering student, Network Engineer, and AI/ML Enthusiast. Secure software, networking, and applied AI.";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -48,7 +55,6 @@ const jsonLd = {
       },
       knowsAbout: [
         "Cyber Security",
-        "Full Stack Development",
         "Network Engineering",
         "Artificial Intelligence",
         "Machine Learning",
@@ -70,7 +76,6 @@ export const metadata: Metadata = {
     "portfolio",
     "augie aristito",
     "security engineering",
-    "full stack developer",
     "network engineer",
     "AI ML",
     "RetroUI",
@@ -99,6 +104,19 @@ export const metadata: Metadata = {
   },
 };
 
+/* Runs before first paint. It sets exactly two attributes and both are
+   strictly opt-in, so the no-JS page is complete:
+
+   `data-build="on"`  permits the live build to hide anything at all.
+   `data-phosphor`    restores the saved accent before paint (no flash).
+
+   Reduced motion and coarse pointers (touch, no hover) never arm the build:
+   there is no way to skip it there, and a finger cannot chase a cursor.
+
+   The boot screen is handled separately by `boot-screen.tsx`, which reads the
+   session marker — it must not run on a repeat visit within the same tab. */
+const BOOT_SCRIPT = `(function(){var d=document.documentElement,w=window;try{var t;try{t=localStorage.getItem("phosphor")}catch(e){}if(t==="amber"||t==="blue")d.setAttribute("data-theme",t);var m=matchMedia("(prefers-reduced-motion: reduce)").matches,c=matchMedia("(hover: none), (pointer: coarse)").matches;if(m||c)return;d.setAttribute("data-build","on");w.__buildWatchdog=setTimeout(function(){d.removeAttribute("data-build")},3000)}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -108,19 +126,28 @@ export default function RootLayout({
     <html
       lang="id"
       suppressHydrationWarning
-      className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}
+      className={`${vt323.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen bg-background text-foreground font-sans retro-pattern">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
+        {/* Belt to the gating's braces. Every build rule is scoped to
+            `html[data-build="on"]`, which only the script above can set, so
+            this should already be unreachable — but if anything ever sets that
+            attribute by another route, the page must still be readable. */}
+        <noscript>
+          <style>{`[data-build]{opacity:1 !important;animation:none !important}.typewriter{width:auto !important;border-right:0 !important}`}</style>
+        </noscript>
+      </head>
+      <body className="min-h-screen bg-background text-foreground">
+        <ThemeProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
+          <BootScreen />
+          <CrtOverlay />
+          <BuildLive />
+          <MatrixRain />
           <Navbar />
           <main>{children}</main>
           <Footer />

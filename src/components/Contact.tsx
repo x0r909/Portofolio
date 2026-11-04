@@ -1,12 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Code2, Link2, Mail, Send } from "lucide-react";
 import { Section } from "@/components/section";
 import { SectionHeader } from "@/components/section-header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardChrome,
   CardContent,
   CardDescription,
   CardHeader,
@@ -16,26 +16,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SECTION_ACCENT } from "@/lib/accents";
-import { cn } from "@/lib/utils";
+
+/**
+ * Contact — an `ssh`-style link list plus a mail form, per DESIGN.md §5b.
+ *
+ * NO SUBMISSION ENDPOINT. The form builds a `mailto:` URL and assigns it to
+ * `window.location.href`. This is deliberate and must stay that way: the site
+ * is a static export (`output: "export"`), so there are no server actions and
+ * no route handlers to post to.
+ *
+ * The contact addresses here are duplicated in `layout.tsx`'s JSON-LD
+ * (`email` / `sameAs`). Changing one requires changing the other.
+ */
 
 const contactLinks = [
   {
-    label: "Email",
+    label: "email",
     value: "augie.aristitoazka@gmail.com",
     href: "mailto:augie.aristitoazka@gmail.com",
-    icon: Mail,
   },
   {
-    label: "GitHub",
+    label: "github",
     value: "github.com/x0r909",
     href: "https://github.com/x0r909",
-    icon: Code2,
   },
   {
-    label: "LinkedIn",
+    label: "linkedin",
     value: "linkedin.com/in/augiearistito",
     href: "https://linkedin.com/in/augiearistito",
-    icon: Link2,
+  },
+  {
+    label: "website",
+    value: "teknostudio.id",
+    href: "https://teknostudio.id",
   },
 ] as const;
 
@@ -64,45 +77,47 @@ export function Contact() {
     <Section id="contact" banded>
       <SectionHeader
         eyebrow="Contact"
-        title="Let&apos;s Connect"
+        title="Let's Connect"
         description="Open to collaboration, internship opportunities, and interesting security / engineering projects."
         accent={SECTION_ACCENT.contact}
+        command="ssh augie@x0r909.dev"
       />
 
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-4">
-          {contactLinks.map((link) => {
-            const Icon = link.icon;
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  link.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "hover-lift h-auto w-full justify-start gap-3 py-4 no-underline"
-                )}
-              >
-                <Icon className="size-5 shrink-0" />
-                <span className="flex flex-col items-start text-left">
-                  <span className="font-head text-sm">{link.label}</span>
-                  <span className="text-xs text-muted-foreground sm:text-sm">
-                    {link.value}
-                  </span>
-                </span>
-              </a>
-            );
-          })}
-        </div>
+        <Card className="hover-glow h-fit">
+          <CardChrome label="links" />
+          <CardContent className="p-0">
+            <ul className="divide-y divide-border">
+              {contactLinks.map((link) => {
+                const external = link.href.startsWith("http");
+                return (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      target={external ? "_blank" : undefined}
+                      rel={external ? "noopener noreferrer" : undefined}
+                      className="flex items-baseline gap-3 px-4 py-3 no-underline transition-colors duration-150 hover:bg-[var(--bg-elev)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--accent-2)]"
+                    >
+                      <span className="w-20 shrink-0 font-mono text-2xs text-muted-foreground">
+                        {link.label}
+                      </span>
+                      <span className="min-w-0 break-all font-mono text-xs text-[var(--accent)] underline decoration-dotted underline-offset-4 hover:decoration-solid sm:text-sm">
+                        {link.value}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
 
-        <Card className="hover-lift">
+        <Card className="hover-glow">
+          <CardChrome label="send-message.sh" />
           <CardHeader>
-            <CardTitle className="font-head text-xl">Send a Message</CardTitle>
+            <CardTitle className="font-display text-xl">
+              Send a Message
+            </CardTitle>
             <CardDescription>
               Isi form di bawah — akan membuka email client kamu.
             </CardDescription>
@@ -141,11 +156,13 @@ export function Contact() {
                 />
               </div>
               <Button type="submit" size="lg" className="w-full sm:w-auto">
-                <Send className="size-4" />
-                Kirim Pesan
+                [ kirim_pesan ]
               </Button>
               {status === "sent" && (
-                <p className="text-sm text-muted-foreground">
+                <p
+                  className="font-mono text-xs text-muted-foreground"
+                  role="status"
+                >
                   Email client siap dibuka. Terima kasih!
                 </p>
               )}
